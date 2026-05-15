@@ -170,6 +170,34 @@ export async function createSignupUserWithConfirmationEmail({
   }
 }
 
+export async function createDirectSignupUser({
+  email,
+  metadata,
+  password,
+}: CreateSignupUserParams) {
+  const normalizedEmail = normalizeEmail(email);
+  const serviceRoleClient = getRequiredServiceRoleClient();
+  const existingUser = await lookupAuthUserByEmail(normalizedEmail);
+
+  if (existingUser.exists) {
+    throw new Error("Für diese E-Mail-Adresse existiert bereits ein Konto.");
+  }
+
+  const createUserResult = await serviceRoleClient.auth.admin.createUser({
+    email: normalizedEmail,
+    email_confirm: true,
+    password,
+    user_metadata: metadata,
+  });
+
+  if (createUserResult.error || !createUserResult.data.user) {
+    throw new Error(
+      createUserResult.error?.message ??
+        "Registrierung konnte nicht abgeschlossen werden."
+    );
+  }
+}
+
 export async function resendSignupConfirmationEmail(email: string) {
   const normalizedEmail = normalizeEmail(email);
   const existingUser = await lookupAuthUserByEmail(normalizedEmail);

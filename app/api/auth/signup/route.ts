@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { createSignupUserWithConfirmationEmail } from "@/lib/auth-signup";
+import { createDirectSignupUser } from "@/lib/auth-signup";
 
 type RequestBody = {
   email?: string;
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       );
     }
 
-    await createSignupUserWithConfirmationEmail({ email, metadata, password });
+    await createDirectSignupUser({ email, metadata, password });
 
     return NextResponse.json({ success: true });
   } catch (error) {

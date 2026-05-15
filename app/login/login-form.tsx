@@ -369,7 +369,6 @@ export function LoginForm({
         data: { session },
       } = await supabase.auth.getSession();
 
-      await verifyAppAccess(session?.access_token);
       await triggerWelcomeEmail(session?.access_token);
       router.push("/dashboard");
     } catch (err) {
@@ -468,18 +467,12 @@ export function LoginForm({
           <header className="flex items-center justify-between gap-3 rounded-full border border-white/70 bg-white/75 px-4 py-3 shadow-[0_18px_48px_rgba(15,23,42,0.08)] backdrop-blur md:px-6">
             <SiteBrand href="/" />
             <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
-              <p className="hidden text-right text-xs font-medium leading-5 text-slate-500 sm:inline-flex sm:min-h-11 sm:items-center sm:justify-center sm:rounded-full sm:bg-[#0e51a0] sm:px-5 sm:text-sm sm:font-semibold sm:text-white sm:shadow-[0_16px_36px_rgba(14,81,160,0.32)]">
-                Zugang erfolgt nach Kauf
-              </p>
               <Link
                 href="/"
                 className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full px-3 text-sm font-medium text-[#707070] transition hover:bg-slate-100 hover:text-[#707070] sm:min-h-11 sm:px-4"
               >
                 Startseite
               </Link>
-              <p className="max-w-[9rem] truncate text-right text-[11px] font-medium leading-4 text-slate-500 sm:hidden">
-                Zugang erfolgt nach Kauf
-              </p>
             </div>
           </header>
 
@@ -538,7 +531,7 @@ export function LoginForm({
 
                       {registered ? (
                         <p className="rounded-2xl border border-emerald-200 bg-emerald-50/95 px-4 py-3 text-sm text-emerald-700">
-                          Registrierung erfolgreich. Bitte bestätige jetzt zuerst deine E-Mail-Adresse über den Link in deinem Postfach.
+                          Registrierung erfolgreich. Du kannst dich jetzt einloggen.
                         </p>
                       ) : null}
 
@@ -714,7 +707,12 @@ export function LoginForm({
                       <Link className="transition hover:text-[#0e51a0]" href="/">
                         Zur Startseite
                       </Link>
-                      <p className="font-medium text-[#707070]">Zugang erfolgt nach Kauf</p>
+                      <Link
+                        className="font-medium text-[#707070] transition hover:text-[#0e51a0]"
+                        href="/register"
+                      >
+                        Noch kein Konto? Jetzt registrieren
+                      </Link>
                     </div>
                   </div>
                 </div>

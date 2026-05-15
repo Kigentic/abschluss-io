@@ -1,9 +1,9 @@
 "use client";
 
-import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { SiteBrand } from "@/components/site-brand";
 import {
@@ -12,56 +12,17 @@ import {
   type LicensePlan,
   validateRegisterForm,
 } from "@/lib/auth-flows";
-import {
-  getPlanKeyForCopeCartProduct,
-  getPlanLabel,
-} from "@/lib/copecart-products";
+import { getPlanLabel } from "@/lib/copecart-products";
 import { INDUSTRY_OPTIONS, type IndustryKey } from "@/lib/industries";
-import { hasSupabaseEnv } from "@/lib/supabase";
+import { getSupabaseBrowserClient, hasSupabaseEnv } from "@/lib/supabase";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
 });
 
-type CopeCartSignupData = {
-  amount: string | null;
-  customerEmail: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  orderId: string | null;
-  productId: string | null;
-  vatAmount: string | null;
-};
-
-const MISSING_PURCHASE_PARAMS_MESSAGE =
-  "Die Registrierung ist nur nach abgeschlossenem Kauf möglich.";
-
-function normalizeParam(value: string | null) {
-  const trimmedValue = value?.trim() ?? "";
-
-  return trimmedValue ? trimmedValue : null;
-}
-
-function parseCopeCartSignupData(
-  searchParams: ReturnType<typeof useSearchParams>
-): CopeCartSignupData {
-  return {
-    amount: normalizeParam(searchParams.get("amount")),
-    customerEmail: normalizeParam(searchParams.get("customer_email")),
-    firstName: normalizeParam(searchParams.get("first_name")),
-    lastName: normalizeParam(searchParams.get("last_name")),
-    orderId: normalizeParam(searchParams.get("order_id")),
-    productId:
-      normalizeParam(searchParams.get("product_id")) ??
-      normalizeParam(searchParams.get("productId")),
-    vatAmount: normalizeParam(searchParams.get("vat_amount")),
-  };
-}
-
 function RegisterPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [organizationName, setOrganizationName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -74,44 +35,6 @@ function RegisterPageContent() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const copeCartSignupData = useMemo(
-    () => parseCopeCartSignupData(searchParams),
-    [searchParams]
-  );
-  const hasRequiredPurchaseParams = Boolean(
-    copeCartSignupData.customerEmail &&
-      copeCartSignupData.orderId &&
-      copeCartSignupData.amount
-  );
-
-  useEffect(() => {
-    if (copeCartSignupData.customerEmail && !email) {
-      setEmail(copeCartSignupData.customerEmail);
-    }
-
-    if (copeCartSignupData.firstName && !firstName) {
-      setFirstName(copeCartSignupData.firstName);
-    }
-
-    if (copeCartSignupData.lastName && !lastName) {
-      setLastName(copeCartSignupData.lastName);
-    }
-
-    const mappedPlan = getPlanKeyForCopeCartProduct(copeCartSignupData.productId);
-
-    if (mappedPlan && mappedPlan !== licensePlan) {
-      setLicensePlan(mappedPlan as LicensePlan);
-    }
-  }, [
-    copeCartSignupData.customerEmail,
-    copeCartSignupData.firstName,
-    copeCartSignupData.lastName,
-    copeCartSignupData.productId,
-    email,
-    firstName,
-    lastName,
-    licensePlan,
-  ]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -139,11 +62,6 @@ function RegisterPageContent() {
       return;
     }
 
-    if (!hasRequiredPurchaseParams) {
-      setError(MISSING_PURCHASE_PARAMS_MESSAGE);
-      return;
-    }
-
     if (Object.keys(validationErrors).length > 0) {
       setFieldErrors(validationErrors);
       return;
@@ -165,16 +83,7 @@ function RegisterPageContent() {
             last_name: values.lastName.trim(),
             username: values.username.trim(),
             industry_key: values.industryKey,
-            cope_cart_amount: copeCartSignupData.amount,
-            cope_cart_customer_email: copeCartSignupData.customerEmail,
-            cope_cart_first_name: copeCartSignupData.firstName,
-            cope_cart_last_name: copeCartSignupData.lastName,
-            cope_cart_order_id: copeCartSignupData.orderId,
-            cope_cart_product_id: copeCartSignupData.productId,
-            cope_cart_vat_amount: copeCartSignupData.vatAmount,
-            license_plan:
-              (getPlanKeyForCopeCartProduct(copeCartSignupData.productId) as LicensePlan | null) ??
-              values.licensePlan,
+            license_plan: values.licensePlan,
           },
           password,
         }),
@@ -208,9 +117,21 @@ function RegisterPageContent() {
         );
       }
 
-      setSuccess(
-        "Registrierung erfolgreich. Dein Zugang wird nach Prüfung freigeschaltet."
-      );
+      const supabase = getSupabaseBrowserClient();
+
+      if (supabase) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: values.email.trim(),
+          password,
+        });
+
+        if (!signInError) {
+          router.push("/dashboard");
+          return;
+        }
+      }
+
+      setSuccess("Registrierung erfolgreich.");
       router.push("/login?registered=1");
     } catch (err) {
       const message =
@@ -288,9 +209,6 @@ function RegisterPageContent() {
                   <p className="mt-4 text-sm leading-7 text-slate-600">
                     Richte deine Organisation in wenigen Schritten ein, lege den passenden Lizenzplan fest und gib deinem Team einen konsistenten Rahmen für bessere Verkaufsgespräche.
                   </p>
-                  <p className="mt-3 text-sm text-gray-500">
-                    (Die Abbuchung erfolgt durch CopeCart.)
-                  </p>
                 </div>
               </div>
 
@@ -314,12 +232,6 @@ function RegisterPageContent() {
                       {!hasSupabaseEnv ? (
                         <p className="rounded-2xl border border-amber-200 bg-amber-50/95 px-4 py-3 text-sm text-amber-800">
                           Die lokale Supabase-Konfiguration fehlt oder ist unvollständig.
-                        </p>
-                      ) : null}
-
-                      {!hasRequiredPurchaseParams ? (
-                        <p className="rounded-2xl border border-amber-200 bg-amber-50/95 px-4 py-3 text-sm text-amber-800">
-                          {MISSING_PURCHASE_PARAMS_MESSAGE}
                         </p>
                       ) : null}
 
@@ -543,7 +455,7 @@ function RegisterPageContent() {
 
                       <button
                         type="submit"
-                        disabled={isLoading || !hasRequiredPurchaseParams}
+                        disabled={isLoading}
                         className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#0e51a0] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_44px_rgba(14,81,160,0.32)] transition hover:bg-[#0b478b] disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {isLoading ? "Registriere..." : "Organisation registrieren"}
