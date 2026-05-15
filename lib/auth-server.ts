@@ -3,9 +3,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   getSupabaseServerClient,
   getSupabaseServerClientInitError,
+  getSupabaseServiceRoleClient,
+  getServiceRoleClientInitError,
 } from "@/lib/supabase-server";
 
 type AuthSuccess = {
+  serviceRoleClient: SupabaseClient;
   supabase: SupabaseClient;
   userId: string;
 };
@@ -34,11 +37,13 @@ export async function requireAuthUser(
   }
 
   const supabase = getSupabaseServerClient(accessToken);
+  const serviceRoleClient = getSupabaseServiceRoleClient();
 
-  if (!supabase) {
+  if (!supabase || !serviceRoleClient) {
     return {
       error:
         getSupabaseServerClientInitError() ??
+        getServiceRoleClientInitError() ??
         "Supabase konnte nicht initialisiert werden.",
       status: 500,
     };
@@ -53,5 +58,5 @@ export async function requireAuthUser(
     return { error: "Nicht autorisiert.", status: 401 };
   }
 
-  return { supabase, userId: user.id };
+  return { serviceRoleClient, supabase, userId: user.id };
 }
