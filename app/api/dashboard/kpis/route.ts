@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 
-import {
-  isFailure as isPaidAppAuthFailure,
-  requirePaidAppUser,
-} from "@/lib/copecart-subscriptions";
+import { isFailure as isPaidAppAuthFailure, requireAuthUser } from "@/lib/auth-server";
 import {
   buildDashboardKpiSummary,
   getDashboardKpiSummaryForUser,
@@ -11,7 +8,7 @@ import {
 
 export async function GET(request: Request) {
   try {
-    const authResult = await requirePaidAppUser(
+    const authResult = await requireAuthUser(
       request.headers.get("authorization")
     );
 

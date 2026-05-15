@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 
-import {
-  isFailure as isPaidAppAuthFailure,
-  requirePaidAppUser,
-} from "@/lib/copecart-subscriptions";
+import { isFailure as isPaidAppAuthFailure, requireAuthUser } from "@/lib/auth-server";
 import {
   getCurrentUtcMonthRange,
   MAX_AUDIO_SECONDS_PER_SESSION,
@@ -12,7 +9,7 @@ import {
 
 export async function GET(request: Request) {
   try {
-    const authResult = await requirePaidAppUser(
+    const authResult = await requireAuthUser(
       request.headers.get("authorization")
     );
 

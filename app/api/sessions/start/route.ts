@@ -21,10 +21,7 @@ import {
   resolveIndustrySettings,
 } from "@/lib/industries";
 import { getIndustryPromptConfig } from "@/lib/prompts/industries";
-import {
-  isFailure as isPaidAppAuthFailure,
-  requirePaidAppUser,
-} from "@/lib/copecart-subscriptions";
+import { isFailure as isPaidAppAuthFailure, requireAuthUser } from "@/lib/auth-server";
 import type { SupabaseServerClient } from "@/lib/supabase-server";
 import { getErrorMessage, logSystemEvent } from "@/lib/system-monitoring";
 import {
@@ -340,7 +337,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const authResult = await requirePaidAppUser(
+    const authResult = await requireAuthUser(
       request.headers.get("authorization")
     );
 

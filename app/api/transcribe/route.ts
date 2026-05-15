@@ -1,10 +1,7 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 
-import {
-  isFailure as isPaidAppAuthFailure,
-  requirePaidAppUser,
-} from "@/lib/copecart-subscriptions";
+import { isFailure as isPaidAppAuthFailure, requireAuthUser } from "@/lib/auth-server";
 import { getErrorMessage, logSystemEvent } from "@/lib/system-monitoring";
 import {
   MAX_AUDIO_SECONDS_PER_SESSION,
@@ -77,7 +74,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const authResult = await requirePaidAppUser(
+    const authResult = await requireAuthUser(
       request.headers.get("authorization")
     );
 

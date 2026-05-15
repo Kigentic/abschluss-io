@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 
-import {
-  isFailure as isPaidAppAuthFailure,
-  requirePaidAppUser,
-} from "@/lib/copecart-subscriptions";
+import { isFailure as isPaidAppAuthFailure, requireAuthUser } from "@/lib/auth-server";
 import {
   FULL_CHAT_TITLE,
   isResumableFullChatSession,
@@ -22,7 +19,7 @@ type ChatSessionRecord = {
 };
 
 export async function GET(request: Request) {
-  const authResult = await requirePaidAppUser(
+  const authResult = await requireAuthUser(
     request.headers.get("authorization")
   );
 

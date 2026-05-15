@@ -27,10 +27,7 @@ import { detectFullSalesObjectionRepetition } from "@/lib/full-sales-repetition"
 import { getSystemPrompt } from "@/lib/chat-prompts";
 import { extractKpiUpdateFromAssistantMessage } from "@/lib/full-sales-kpi-parser";
 import { getOrganizationIndustrySettings } from "@/lib/industries";
-import {
-  isFailure as isPaidAppAuthFailure,
-  requirePaidAppUser,
-} from "@/lib/copecart-subscriptions";
+import { isFailure as isPaidAppAuthFailure, requireAuthUser } from "@/lib/auth-server";
 import { getErrorMessage, logSystemEvent } from "@/lib/system-monitoring";
 import {
   type AppointmentLeadSource,
@@ -350,7 +347,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const authResult = await requirePaidAppUser(
+    const authResult = await requireAuthUser(
       request.headers.get("authorization")
     );
 
