@@ -14,6 +14,7 @@ import {
 } from "@/lib/chat-session";
 import {
   selectFullSalesAvatar,
+  type FullSalesAvatarHistoryEntry,
   type FullSalesAvatarSnapshot,
 } from "@/lib/full-sales-avatar";
 import {
@@ -574,11 +575,30 @@ export async function POST(request: Request) {
         serviceRoleClient,
         userId,
       });
+
+      const { data: avatarHistoryRows } = await serviceRoleClient
+        .from("full_sales_avatar_snapshots")
+        .select("avatar_name, avatar_gender, avatar_age, avatar_profession_or_context")
+        .eq("user_id", userId)
+        .eq("industry_key", industrySettings.industryKey)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      const sessionHistory: FullSalesAvatarHistoryEntry[] = (avatarHistoryRows ?? []).map(
+        (row) => ({
+          avatarAge: row.avatar_age,
+          avatarGender: row.avatar_gender as "male" | "female",
+          avatarName: row.avatar_name,
+          avatarProfessionOrContext: row.avatar_profession_or_context,
+        })
+      );
+
       const industryPromptConfig = getIndustryPromptConfig(industrySettings.industryKey);
       const selection = selectFullSalesAvatar({
         candidates: industryPromptConfig.openings.fullSales,
         difficulty: automaticDifficulty ?? "medium",
         previousAvatar,
+        sessionHistory,
       });
       const briefingMessage = formatFullSalesBriefing({
         avatarAge: selection.avatar.avatarAge,

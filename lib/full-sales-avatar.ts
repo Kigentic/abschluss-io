@@ -67,6 +67,13 @@ export type FullSalesAvatarSelection = {
   comparison: SimulationAvatarDifference | null;
 };
 
+export type FullSalesAvatarHistoryEntry = {
+  avatarAge: number;
+  avatarGender: "male" | "female";
+  avatarName: string;
+  avatarProfessionOrContext: string;
+};
+
 function getRandomItem<T>(items: readonly T[]) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -96,35 +103,70 @@ export function selectFullSalesAvatar(params: {
   candidates: readonly FullSalesAvatarCandidate[];
   difficulty: SessionDifficulty;
   previousAvatar?: FullSalesAvatarSnapshot | null;
+  sessionHistory?: FullSalesAvatarHistoryEntry[];
 }): FullSalesAvatarSelection {
-  const scenarioSeed = getRandomItem(params.candidates);
-  const selection = selectDiverseSimulationAvatarProfile({
-    module: "full_sales",
-    previousAvatar: params.previousAvatar ?? null,
-    preferredDifficulty: params.difficulty,
-  });
-  const avatarName = maybeUseAlternativeName(
-    selection.profile.avatarGender,
-    pickAvatarName(selection.profile.avatarGender)
+  const history = params.sessionHistory ?? [];
+  const blockedNames = new Set(history.map((h) => h.avatarName));
+  const blockedProfessions = new Set(history.map((h) => h.avatarProfessionOrContext));
+
+  function tryBuildAvatar(): { avatar: FullSalesAvatar; comparison: SimulationAvatarDifference | null } {
+    const selection = selectDiverseSimulationAvatarProfile({
+      module: "full_sales",
+      previousAvatar: params.previousAvatar ?? null,
+      preferredDifficulty: params.difficulty,
+    });
+    const selectedGender = selection.profile.avatarGender;
+
+    // PROBLEM 1: only use candidates that match the selected gender
+    const genderMatchingCandidates = params.candidates.filter(
+      (c) => c.avatarGender === selectedGender
+    );
+    const candidatePool =
+      genderMatchingCandidates.length > 0 ? genderMatchingCandidates : params.candidates;
+
+    // PROBLEM 2: exclude blocked names and scenarios from session history
+    const availableCandidates = candidatePool.filter(
+      (c) => !blockedNames.has(c.avatarName) && !blockedProfessions.has(c.avatarProfessionOrContext)
+    );
+    const effectiveCandidates = availableCandidates.length > 0 ? availableCandidates : candidatePool;
+
+    const scenarioSeed = getRandomItem(effectiveCandidates);
+    const avatarName = maybeUseAlternativeName(
+      selectedGender,
+      pickAvatarName(selectedGender)
+    );
+
+    const avatar = {
+      ...selection.profile,
+      avatarEmotionalTone: scenarioSeed.avatarEmotionalTone,
+      avatarGoal: scenarioSeed.avatarGoal,
+      avatarLifeStage: scenarioSeed.avatarLifeStage,
+      avatarName,
+      avatarPrimaryProblem: scenarioSeed.avatarPrimaryProblem,
+      avatarProfessionOrContext: scenarioSeed.avatarProfessionOrContext,
+      avatarSecondaryContext: scenarioSeed.avatarSecondaryContext,
+      openingMessage: "",
+    } satisfies FullSalesAvatar;
+
+    avatar.openingMessage = buildOpeningMessage(avatar);
+    return { avatar, comparison: selection.comparison };
+  }
+
+  const first = tryBuildAvatar();
+
+  // PROBLEM 2: age±5 + gender collision → retry once
+  const hasAgeGenderCollision = history.some(
+    (h) =>
+      h.avatarGender === first.avatar.avatarGender &&
+      Math.abs(h.avatarAge - first.avatar.avatarAge) <= 5
   );
-  const avatar = {
-    ...selection.profile,
-    avatarEmotionalTone: scenarioSeed.avatarEmotionalTone,
-    avatarGoal: scenarioSeed.avatarGoal,
-    avatarLifeStage: scenarioSeed.avatarLifeStage,
-    avatarName,
-    avatarPrimaryProblem: scenarioSeed.avatarPrimaryProblem,
-    avatarProfessionOrContext: scenarioSeed.avatarProfessionOrContext,
-    avatarSecondaryContext: scenarioSeed.avatarSecondaryContext,
-    openingMessage: "",
-  } satisfies FullSalesAvatar;
 
-  avatar.openingMessage = buildOpeningMessage(avatar);
+  if (!hasAgeGenderCollision) {
+    return { avatar: first.avatar, comparison: first.comparison };
+  }
 
-  return {
-    avatar,
-    comparison: selection.comparison,
-  };
+  const second = tryBuildAvatar();
+  return { avatar: second.avatar, comparison: second.comparison };
 }
 
 function formatAvatarSummaryLines(avatar: FullSalesAvatar | FullSalesAvatarSnapshot) {
