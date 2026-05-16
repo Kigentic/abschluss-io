@@ -725,7 +725,7 @@ export async function resolveAppAccessStateForUser(params: {
           message:
               subscription.subscription_status === "past_due" &&
               !isFutureIsoDate(subscription.grace_period_until)
-                ? "Die Karenzfrist fuer deine fehlgeschlagene Zahlung ist abgelaufen."
+                ? "Die Karenzfrist für deine fehlgeschlagene Zahlung ist abgelaufen."
                 : new Date(subscription.current_period_paid_until).getTime() < Date.now()
                 ? "Dein Abo ist abgelaufen."
                 : "Dein Abo ist aktuell nicht aktiv.",

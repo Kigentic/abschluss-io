@@ -39,15 +39,15 @@ function buildPaymentFailedEmail({ firstName }: { firstName: string | null }) {
     text: [
       `Hallo ${greetingName},`,
       "",
-      "die Abbuchung fuer deinen AbschlussIO-Zugang konnte leider nicht erfolgreich durchgefuehrt werden.",
+      "die Abbuchung für deinen AbschlussIO-Zugang konnte leider nicht erfolgreich durchgeführt werden.",
       "",
-      "Dein Zugang bleibt noch 72 Stunden aktiv. Bitte aktualisiere deine Zahlungsdaten bzw. stelle sicher, dass die naechste Abbuchung erfolgreich durchgefuehrt werden kann.",
+      "Dein Zugang bleibt noch 72 Stunden aktiv. Bitte aktualisiere deine Zahlungsdaten bzw. stelle sicher, dass die nächste Abbuchung erfolgreich durchgeführt werden kann.",
       "",
-      "Wenn innerhalb dieser Frist keine erfolgreiche Zahlung eingeht, wird der Zugang deiner Organisation voruebergehend gesperrt.",
+      "Wenn innerhalb dieser Frist keine erfolgreiche Zahlung eingeht, wird der Zugang deiner Organisation vorübergehend gesperrt.",
       "",
       "Sobald die Zahlung erfolgreich nachgeholt wurde, bleibt dein Zugang automatisch aktiv.",
       "",
-      "Viele Gruesse",
+      "Viele Grüße",
       "AbschlussIO",
     ].join("\n"),
     html: `
@@ -67,19 +67,19 @@ function buildPaymentFailedEmail({ firstName }: { firstName: string | null }) {
             <div style="padding:40px;">
               <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Hallo ${safeGreetingName},</p>
               <p style="margin:0 0 14px;font-size:16px;line-height:1.7;color:#334155;">
-                die Abbuchung fuer deinen AbschlussIO-Zugang konnte leider nicht erfolgreich durchgefuehrt werden.
+                die Abbuchung für deinen AbschlussIO-Zugang konnte leider nicht erfolgreich durchgeführt werden.
               </p>
               <p style="margin:0 0 14px;font-size:16px;line-height:1.7;color:#334155;">
-                Dein Zugang bleibt noch 72 Stunden aktiv. Bitte aktualisiere deine Zahlungsdaten bzw. stelle sicher, dass die naechste Abbuchung erfolgreich durchgefuehrt werden kann.
+                Dein Zugang bleibt noch 72 Stunden aktiv. Bitte aktualisiere deine Zahlungsdaten bzw. stelle sicher, dass die nächste Abbuchung erfolgreich durchgeführt werden kann.
               </p>
               <p style="margin:0 0 14px;font-size:16px;line-height:1.7;color:#334155;">
-                Wenn innerhalb dieser Frist keine erfolgreiche Zahlung eingeht, wird der Zugang deiner Organisation voruebergehend gesperrt.
+                Wenn innerhalb dieser Frist keine erfolgreiche Zahlung eingeht, wird der Zugang deiner Organisation vorübergehend gesperrt.
               </p>
               <p style="margin:0 0 28px;font-size:16px;line-height:1.7;color:#334155;">
                 Sobald die Zahlung erfolgreich nachgeholt wurde, bleibt dein Zugang automatisch aktiv.
               </p>
               <p style="margin:0;font-size:15px;line-height:1.7;color:#334155;">
-                Viele Gruesse<br />
+                Viele Grüße<br />
                 AbschlussIO
               </p>
             </div>

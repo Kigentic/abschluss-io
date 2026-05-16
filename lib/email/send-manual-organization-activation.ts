@@ -57,12 +57,12 @@ function buildEmail(params: {
     text: [
       `Hallo ${firstName},`,
       "",
-      "fuer dich wurde ein Zugang zu AbschlussIO angelegt.",
+      "für dich wurde ein Zugang zu AbschlussIO angelegt.",
       "",
-      `Dein Zugang ist fuer ${params.usageDurationDays} Tage freigeschaltet.`,
-      `Der Zugang laeuft am ${validUntilLabel} ab.`,
+      `Dein Zugang ist für ${params.usageDurationDays} Tage freigeschaltet.`,
+      `Der Zugang läuft am ${validUntilLabel} ab.`,
       "",
-      "Bitte bestaetige deine E-Mail-Adresse und lege dein Passwort fest, um dein Konto zu aktivieren.",
+      "Bitte bestätige deine E-Mail-Adresse und lege dein Passwort fest, um dein Konto zu aktivieren.",
       "",
       "Zugang aktivieren:",
       params.activationUrl,
@@ -70,7 +70,7 @@ function buildEmail(params: {
       "Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:",
       params.activationUrl,
       "",
-      "Viele Gruesse",
+      "Viele Grüße",
       "AbschlussIO",
     ].join("\n"),
     html: `
@@ -90,16 +90,16 @@ function buildEmail(params: {
             <div style="padding:40px;">
               <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Hallo ${safeFirstName},</p>
               <p style="margin:0 0 16px;font-size:16px;line-height:1.7;color:#334155;">
-                fuer dich wurde ein Zugang zu AbschlussIO angelegt.
+                für dich wurde ein Zugang zu AbschlussIO angelegt.
               </p>
               <p style="margin:0 0 16px;font-size:16px;line-height:1.7;color:#334155;">
-                Dein Zugang ist fuer ${params.usageDurationDays} Tage freigeschaltet.
+                Dein Zugang ist für ${params.usageDurationDays} Tage freigeschaltet.
               </p>
               <p style="margin:0 0 16px;font-size:16px;line-height:1.7;color:#334155;">
-                Der Zugang laeuft am ${escapeHtml(validUntilLabel)} ab.
+                Der Zugang läuft am ${escapeHtml(validUntilLabel)} ab.
               </p>
               <p style="margin:0 0 28px;font-size:16px;line-height:1.7;color:#334155;">
-                Bitte bestaetige deine E-Mail-Adresse und lege dein Passwort fest, um dein Konto zu aktivieren.
+                Bitte bestätige deine E-Mail-Adresse und lege dein Passwort fest, um dein Konto zu aktivieren.
               </p>
               <p style="margin:0 0 28px;">
                 <a href="${safeActivationUrl}" style="display:inline-block;border-radius:999px;background:#0f4c81;padding:14px 24px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">
@@ -113,7 +113,7 @@ function buildEmail(params: {
                 <a href="${safeActivationUrl}" style="color:#0f4c81;text-decoration:underline;">${safeActivationUrl}</a>
               </p>
               <p style="margin:0;font-size:15px;line-height:1.7;color:#334155;">
-                Viele Gruesse<br />
+                Viele Grüße<br />
                 AbschlussIO
               </p>
             </div>

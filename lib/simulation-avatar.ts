@@ -596,7 +596,7 @@ export function formatJobSituation(value: SimulationJobSituation) {
     case "student":
       return "Student";
     case "pupil":
-      return "Schueler";
+      return "Schüler";
     case "trainee":
       return "Azubi";
     case "employed_full_time":
@@ -604,7 +604,7 @@ export function formatJobSituation(value: SimulationJobSituation) {
     case "employed_part_time":
       return "Teilzeit angestellt";
     case "self_employed":
-      return "selbststaendig";
+      return "selbstständig";
     case "entrepreneur":
       return "Unternehmer";
     case "unemployed":
@@ -716,11 +716,11 @@ export function formatObjectionType(value: SimulationObjectionType) {
 export function getDifficultyPromptGuidance(value: SessionDifficulty) {
   switch (value) {
     case "easy":
-      return "grundsaetzlich offen, gut ansprechbar, mit normaler Geduld und eher loesbaren Einwaenden";
+      return "grundsätzlich offen, gut ansprechbar, mit normaler Geduld und eher lösbaren Einwänden";
     case "medium":
-      return "interessiert, aber mit mehreren echten Einwaenden, spuerbarer Vorsicht und normaler Abschlusshemmung";
+      return "interessiert, aber mit mehreren echten Einwänden, spürbarer Vorsicht und normaler Abschlusshemmung";
     case "hard":
-      return "deutlich skeptisch, ungeduldiger, widerstaendiger und sensibel fuer Floskeln oder schwache Fuehrung";
+      return "deutlich skeptisch, ungeduldiger, widerständiger und sensibel für Floskeln oder schwache Führung";
     case "almost_impossible":
       return "sehr schwerer Fall mit geringer Geduld, hoher Abbruchneigung und nur kleiner Wahrscheinlichkeit auf klares Gewinnen";
     default:
@@ -733,11 +733,11 @@ export function getDiscPromptGuidance(value: SimulationDiscType) {
     case "dominant":
       return "straight, fordernd, direkt, forsch, ego-typisch und besserwisserisch";
     case "analytical":
-      return "skeptisch, vorsichtig, faktenbasiert und pruefend";
+      return "skeptisch, vorsichtig, faktenbasiert und prüfend";
     case "steady":
       return "unsicher, empfindlich, vorsichtig und schnell angefasst";
     case "experimental":
-      return "schnell begeistert, offen fuer Neues, neugierig, aber sprunghaft";
+      return "schnell begeistert, offen für Neues, neugierig, aber sprunghaft";
     default:
       return value;
   }
@@ -757,7 +757,7 @@ export function getProfileSummaryLines(profile: SimulationAvatarProfile) {
     `- Finanzieller Spielraum: ${formatFinancialBudget(profile.avatarFinancialBudget)}`,
     `- Disc-Typ: ${formatDiscType(profile.avatarDiscType)}`,
     `- Difficulty: ${profile.avatarDifficulty}`,
-    `- Typische Einwaende: ${profile.avatarObjections
+    `- Typische Einwände: ${profile.avatarObjections
       .map((entry) => formatObjectionType(entry))
       .join(", ")}`,
   ].join("\n");

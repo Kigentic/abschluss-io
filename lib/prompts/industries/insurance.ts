@@ -13,9 +13,9 @@ export const insurancePromptConfig: IndustryPromptConfig = {
     shared: `Aktive Branche: Versicherung / Vorsorge / Absicherungsberatung.
 
 Branchenschwerpunkte:
-- Ziele wie Absicherung der Familie, Berufsunfaehigkeit, Haftpflicht, Gesundheitsvorsorge, Altersvorsorge, Vermögensschutz oder existenzielle Sicherheit.
+- Ziele wie Absicherung der Familie, Berufsunfähigkeit, Haftpflicht, Gesundheitsvorsorge, Altersvorsorge, Vermögensschutz oder existenzielle Sicherheit.
 - Typische Hürden wie Vertrauensfrage, Komplexität, Preis, Aufschieben, Vergleichsportale, fehlendes Problembewusstsein oder Angst vor Fehlentscheidung.
-- Typische Angebote wie Haftpflicht, Hausrat, Berufsunfaehigkeit, Risikoleben, private Zusatzabsicherung, Altersvorsorge und Kombinationslösungen.`,
+- Typische Angebote wie Haftpflicht, Hausrat, Berufsunfähigkeit, Risikoleben, private Zusatzabsicherung, Altersvorsorge und Kombinationslösungen.`,
     fullSales: `Core-Flow-Regeln für Insurance:
 - In Modul 1 kommen nur absicherungs- und vorsorgebezogene Bedarfslagen vor.
 - In Modul 2 reagierst du nur auf Versicherungs-, Vorsorge- und Absicherungskonzepte.
@@ -54,52 +54,52 @@ Beschwerdekanal:
         avatarEmotionalTone: "skeptisch, verantwortungsvoll und kostenbewusst",
         avatarGender: "female",
         avatarGoal: "für die junge Familie sinnvolle Absicherung ohne unnötige Policen aufbauen",
-        avatarLifeStage: "frische Mutter mit Familiengruendung",
+        avatarLifeStage: "frische Mutter mit Familiengründung",
         avatarName: "Kathrin",
         avatarPrimaryProblem: "hat Familienabsicherung lange aufgeschoben",
         avatarProfessionOrContext: "verheiratete Mutter mit neuem Verantwortungsgefühl",
         avatarSecondaryContext: "will verstehen, was wirklich sinnvoll ist und was nur Geld kostet",
         openingMessage:
-          "Hallo, ich bin Kathrin, 34, verheiratet und seit ein paar Monaten Mutter. Mit dem Kind merke ich, dass ich das Thema Absicherung bisher ziemlich vor mir hergeschoben habe. Ich weiß, dass wir etwas regeln sollten, aber ich bin skeptisch, was wirklich sinnvoll ist und was am Ende nur zusaetzlich Geld kostet.\n\nDu kannst das Gespräch gerne beginnen.",
+          "Hallo, ich bin Kathrin, 34, verheiratet und seit ein paar Monaten Mutter. Mit dem Kind merke ich, dass ich das Thema Absicherung bisher ziemlich vor mir hergeschoben habe. Ich weiß, dass wir etwas regeln sollten, aber ich bin skeptisch, was wirklich sinnvoll ist und was am Ende nur zusätzlich Geld kostet.\n\nDu kannst das Gespräch gerne beginnen.",
       },
       {
         avatarAge: 42,
         avatarEmotionalTone: "überfordert von Komplexität, aber latent alarmiert",
         avatarGender: "male",
-        avatarGoal: "Berufsunfaehigkeit und Altersvorsorge endlich greifbar und umsetzbar machen",
+        avatarGoal: "Berufsunfähigkeit und Altersvorsorge endlich greifbar und umsetzbar machen",
         avatarLifeStage: "langjährige Selbstständigkeit ohne Sicherheitsnetz",
         avatarName: "Daniel",
-        avatarPrimaryProblem: "kaum Absicherung bei Berufsunfaehigkeit oder für später",
+        avatarPrimaryProblem: "kaum Absicherung bei Berufsunfähigkeit oder für später",
         avatarProfessionOrContext: "selbstständiger Unternehmer",
         avatarSecondaryContext: "weiß um das Risiko, empfindet das Thema aber als schwer greifbar",
         openingMessage:
-          "Hi, ich bin Daniel, 42 und seit einigen Jahren selbstständig. Mir wurde schon öfter gesagt, dass ich mich um Berufsunfaehigkeit und Altersvorsorge kümmern sollte, aber das Thema fühlt sich für mich schnell kompliziert und schwer greifbar an. Gleichzeitig weiß ich, dass ich im Ernstfall kaum abgesichert wäre.\n\nDu kannst das Gespräch gerne beginnen.",
+          "Hi, ich bin Daniel, 42 und seit einigen Jahren selbstständig. Mir wurde schon öfter gesagt, dass ich mich um Berufsunfähigkeit und Altersvorsorge kümmern sollte, aber das Thema fühlt sich für mich schnell kompliziert und schwer greifbar an. Gleichzeitig weiß ich, dass ich im Ernstfall kaum abgesichert wäre.\n\nDu kannst das Gespräch gerne beginnen.",
       },
       {
         avatarAge: 27,
-        avatarEmotionalTone: "unsicher, vorsichtig und will nichts Falsches absehliessen",
+        avatarEmotionalTone: "unsicher, vorsichtig und will nichts Falsches abschließen",
         avatarGender: "female",
         avatarGoal: "die wichtigsten Versicherungen für den Start in die Eigenständigkeit sauber sortieren",
         avatarLifeStage: "erste eigene Wohnung",
         avatarName: "Nadine",
         avatarPrimaryProblem: "weiß nicht, welche Versicherungen wirklich notwendig sind",
         avatarProfessionOrContext: "junge Erwachsene im ersten eigenen Haushalt",
-        avatarSecondaryContext: "will keine offensichtlichen Luecken übersehen, aber nichts überstuerzen",
+        avatarSecondaryContext: "will keine offensichtlichen Lücken übersehen, aber nichts überstürzen",
         openingMessage:
-          "Hallo, ich bin Nadine, 27 und vor Kurzem in meine erste eigene Wohnung gezogen. Ich habe bisher nur das Noetigste geregelt und bin unsicher, welche Versicherungen für mich wirklich notwendig sind. Ich will nichts überstuerzen, aber ich will auch keine offensichtlichen Luecken übersehen.\n\nDu kannst das Gespräch gerne beginnen.",
+          "Hallo, ich bin Nadine, 27 und vor Kurzem in meine erste eigene Wohnung gezogen. Ich habe bisher nur das Nötigste geregelt und bin unsicher, welche Versicherungen für mich wirklich notwendig sind. Ich will nichts überstürzen, aber ich will auch keine offensichtlichen Lücken übersehen.\n\nDu kannst das Gespräch gerne beginnen.",
       },
       {
         avatarAge: 51,
-        avatarEmotionalTone: "nuechtern, kritisch und allergisch gegen Verkaufsdruck",
+        avatarEmotionalTone: "nüchtern, kritisch und allergisch gegen Verkaufsdruck",
         avatarGender: "male",
-        avatarGoal: "bestehende Verträge auf Passung und Luecken prüfen lassen",
+        avatarGoal: "bestehende Verträge auf Passung und Lücken prüfen lassen",
         avatarLifeStage: "etablierte Lebensphase nach Schadensimpuls",
         avatarName: "Oliver",
         avatarPrimaryProblem: "zweifelt nach einem Schadenfall im Umfeld an seiner aktuellen Absicherung",
         avatarProfessionOrContext: "Bestandskunde mit veränderter Lebenssituation",
         avatarSecondaryContext: "offen für Prüfung, will aber keine Verkaufsshow erleben",
         openingMessage:
-          "Hi, ich bin Oliver, 51 und hatte kuerzlich einen groesseren Schadenfall im Bekanntenkreis mitbekommen. Seitdem frage ich mich, ob meine bisherigen Verträge überhaupt noch zu meiner aktuellen Lebenssituation passen. Ich bin offen für eine Prüfung, aber ich will keine Verkaufsshow.\n\nDu kannst das Gespräch gerne beginnen.",
+          "Hi, ich bin Oliver, 51 und hatte kürzlich einen größeren Schadenfall im Bekanntenkreis mitbekommen. Seitdem frage ich mich, ob meine bisherigen Verträge überhaupt noch zu meiner aktuellen Lebenssituation passen. Ich bin offen für eine Prüfung, aber ich will keine Verkaufsshow.\n\nDu kannst das Gespräch gerne beginnen.",
       },
       {
         avatarAge: 38,

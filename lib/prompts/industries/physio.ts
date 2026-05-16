@@ -108,7 +108,7 @@ Beschwerdekanal:
         avatarGoal: "dauerhaft beweglicher und alltagssicherer werden statt nur kurzfristige Linderung",
         avatarLifeStage: "spätere Lebensphase mit wiederkehrenden Einschränkungen",
         avatarName: "Sabine",
-        avatarPrimaryProblem: "wiederkehrende Beschwerden schraenken den Alltag ein",
+        avatarPrimaryProblem: "wiederkehrende Beschwerden schränken den Alltag ein",
         avatarProfessionOrContext: "ältere Patientin mit steigendem Sicherheitsbedürfnis",
         avatarSecondaryContext: "hat keine Lust auf kurzfristige Effekte ohne nachhaltigen Weg",
         openingMessage:

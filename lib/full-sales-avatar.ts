@@ -85,7 +85,7 @@ function buildOpeningMessage(avatar: FullSalesAvatar) {
     .join(" und ");
 
   if (avatar.avatarDifficulty === "easy") {
-    return `Hallo, ich bin ${avatar.avatarName}. Ich schaue mich um, weil ${avatar.avatarPrimaryProblem.toLowerCase()}. Grundsaetzlich bin ich offen, will aber verstehen, ob das diesmal wirklich zu mir passt.`;
+    return `Hallo, ich bin ${avatar.avatarName}. Ich schaue mich um, weil ${avatar.avatarPrimaryProblem.toLowerCase()}. Grundsätzlich bin ich offen, will aber verstehen, ob das diesmal wirklich zu mir passt.`;
   }
 
   if (avatar.avatarDifficulty === "medium") {
@@ -93,10 +93,10 @@ function buildOpeningMessage(avatar: FullSalesAvatar) {
   }
 
   if (avatar.avatarDifficulty === "hard") {
-    return `Hallo, ${avatar.avatarName} hier. Ich schaue zwar nach einer Loesung fuer ${avatar.avatarPrimaryProblem.toLowerCase()}, aber ehrlich gesagt bin ich bei ${objectionHint || "dem Ganzen"} ziemlich skeptisch.`;
+    return `Hallo, ${avatar.avatarName} hier. Ich schaue zwar nach einer Lösung für ${avatar.avatarPrimaryProblem.toLowerCase()}, aber ehrlich gesagt bin ich bei ${objectionHint || "dem Ganzen"} ziemlich skeptisch.`;
   }
 
-  return `Hallo, ich bin ${avatar.avatarName}. Ich will direkt ehrlich sein: ${avatar.avatarPrimaryProblem} nervt mich zwar, aber ich bin gerade kaum ueberzeugt, dass so ein Gespraech fuer mich wirklich etwas veraendert.`;
+  return `Hallo, ich bin ${avatar.avatarName}. Ich will direkt ehrlich sein: ${avatar.avatarPrimaryProblem} nervt mich zwar, aber ich bin gerade kaum überzeugt, dass so ein Gespräch für mich wirklich etwas verändert.`;
 }
 
 export function selectFullSalesAvatar(params: {
@@ -176,7 +176,7 @@ function formatAvatarSummaryLines(avatar: FullSalesAvatar | FullSalesAvatarSnaps
     `- Lebensphase / Rolle: ${avatar.avatarLifeStage}`,
     `- Beruf / Kontext: ${avatar.avatarProfessionOrContext}`,
     `- Hauptproblem: ${avatar.avatarPrimaryProblem}`,
-    `- Sekundaerer Kontext: ${avatar.avatarSecondaryContext}`,
+    `- Sekundärer Kontext: ${avatar.avatarSecondaryContext}`,
     `- Ziel: ${avatar.avatarGoal}`,
     `- Emotionaler Ton: ${avatar.avatarEmotionalTone}`,
   ].join("\n");
@@ -191,8 +191,8 @@ export function buildFullSalesAvatarPrompt(
 
   const currentAvatar = context.currentAvatar;
   const blocks = [
-    `AVATAR-VORGABE FUER DIESE SESSION:
-Bleibe exakt bei diesem Interessentenprofil. Erfinde keinen aehnlichen Ersatz und wechsle weder Alter, Lebensphase, Problem noch Motivation.
+    `AVATAR-VORGABE FÜR DIESE SESSION:
+Bleibe exakt bei diesem Interessentenprofil. Erfinde keinen ähnlichen Ersatz und wechsle weder Alter, Lebensphase, Problem noch Motivation.
 
 ${formatAvatarSummaryLines(currentAvatar)}
 
@@ -206,19 +206,19 @@ ${formatAvatarSummaryLines(currentAvatar)}
 - Difficulty: ${currentAvatar.avatarDifficulty} (${getDifficultyPromptGuidance(
       currentAvatar.avatarDifficulty
     )})
-- Wahrscheinliche Einwaende: ${currentAvatar.avatarObjections
+- Wahrscheinliche Einwände: ${currentAvatar.avatarObjections
       .map((entry) => formatObjectionType(entry))
       .join(", ")}
 
-Die Difficulty muss sich konkret auf Offenheit, Widerstand, Geduld, Gespraechsabbruchneigung, Bullshit-Bingo-Empfindlichkeit und Abschlusswahrscheinlichkeit auswirken.
-Der Disc-Typ und die Einwaende muessen sich spuerbar im Verhalten zeigen.`,
+Die Difficulty muss sich konkret auf Offenheit, Widerstand, Geduld, Gesprächsabbruchneigung, Bullshit-Bingo-Empfindlichkeit und Abschlusswahrscheinlichkeit auswirken.
+Der Disc-Typ und die Einwände müssen sich spürbar im Verhalten zeigen.`,
   ];
 
   blocks.push(`DIFFICULTY-VERHALTEN (VERBINDLICH):
 - easy: kooperativ bleiben, kurze subtile Regieanweisungen nur selten.
-- medium: spuerbar mehr Unsicherheit/Zoegern/Skepsis, Regieanweisungen regelmaessiger, mindestens eine vertiefende Rueckfrage.
-- hard: deutlich skeptischer und emotionaler, vergleicht Alternativen, challenged schwache Claims (Preis, Vertrauen, Differenzierung, Dringlichkeit), Regieanweisungen haeufig aber kurz.
-- Pro Kundenantwort maximal eine kursiv gesetzte Regieanweisung und nur wenn sie natuerlich passt.`);
+- medium: spürbar mehr Unsicherheit/Zögern/Skepsis, Regieanweisungen regelmäßiger, mindestens eine vertiefende Rückfrage.
+- hard: deutlich skeptischer und emotionaler, vergleicht Alternativen, challenged schwache Claims (Preis, Vertrauen, Differenzierung, Dringlichkeit), Regieanweisungen häufig aber kurz.
+- Pro Kundenantwort maximal eine kursiv gesetzte Regieanweisung und nur wenn sie natürlich passt.`);
 
   if (context.previousAvatar) {
     const difference = calculateSimulationAvatarDifference(
@@ -231,12 +231,12 @@ Der zuletzt verwendete Avatar war:
 
 ${formatAvatarSummaryLines(context.previousAvatar)}
 
-Der neue Avatar wurde bewusst als Gegenpol ausgewaehlt.
-- Zielwert ist eine spuerbare Abweichung von rund 70 Prozent.
-- Bereits bewusst veraenderte Profil-Dimensionen: ${describeDifferenceDimensions(
+Der neue Avatar wurde bewusst als Gegenpol ausgewählt.
+- Zielwert ist eine spürbare Abweichung von rund 70 Prozent.
+- Bereits bewusst veränderte Profil-Dimensionen: ${describeDifferenceDimensions(
         difference
       )}.
-- Uebernimm nicht dieselbe Grundfigur mit nur leicht geaendertem Detail.`);
+- Übernimm nicht dieselbe Grundfigur mit nur leicht geändertem Detail.`);
   }
 
   return blocks.join("\n\n");

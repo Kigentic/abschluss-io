@@ -73,71 +73,71 @@ type ComplaintAvatarSelection = {
 const COMPLAINT_SEEDS: readonly ComplaintSeed[] = [
   {
     avatarComplaintContext:
-      "der Monatsbeitrag wurde doppelt abgebucht und seitdem kam keine klare Rueckmeldung",
+      "der Monatsbeitrag wurde doppelt abgebucht und seitdem kam keine klare Rückmeldung",
     avatarComplaintGoal:
-      "eine verbindliche Korrektur und das Gefuehl, dass jemand das Thema wirklich uebernimmt",
+      "eine verbindliche Korrektur und das Gefühl, dass jemand das Thema wirklich übernimmt",
     avatarComplaintHistory:
       "hat bereits nachgehakt und nur ausweichende Standardantworten bekommen",
     avatarComplaintTopic: "Doppelte Abbuchung",
-    avatarComplaintType: "organisatorische Enttaeuschung",
+    avatarComplaintType: "organisatorische Enttäuschung",
     avatarInnerAmplifiers: [
-      "fuehlt sich mit Standardantworten abgespeist",
-      "hat kaum Zeit fuer weiteren Orga-Aufwand",
+      "fühlt sich mit Standardantworten abgespeist",
+      "hat kaum Zeit für weiteren Orga-Aufwand",
     ],
     avatarLifeContext: "balanciert Beruf und privaten Alltag mit wenig Puffer",
     avatarMembershipContext:
-      "ist eigentlich regelmaessig im Studio und erwartet saubere Prozesse",
+      "ist eigentlich regelmäßig im Studio und erwartet saubere Prozesse",
   },
   {
     avatarComplaintContext:
-      "mehrere Geraete sind seit Tagen ausser Betrieb und stoeren die Trainingsroutine massiv",
+      "mehrere Geräte sind seit Tagen außer Betrieb und stören die Trainingsroutine massiv",
     avatarComplaintGoal:
-      "eine belastbare Aussage, wann sich wirklich etwas aendert",
+      "eine belastbare Aussage, wann sich wirklich etwas ändert",
     avatarComplaintHistory:
-      "hat schon mehrfach gehoert, dass sich jemand kuemmert, ohne sichtbare Wirkung",
-    avatarComplaintTopic: "Kaputte Geraete",
+      "hat schon mehrfach gehört, dass sich jemand kümmert, ohne sichtbare Wirkung",
+    avatarComplaintTopic: "Kaputte Geräte",
     avatarComplaintType: "leistungsbezogene Frustration",
     avatarInnerAmplifiers: [
-      "zahlt vollen Beitrag fuer eingeschraenkte Leistung",
+      "zahlt vollen Beitrag für eingeschränkte Leistung",
       "trainiert mit engem Zeitfenster und klarer Routine",
     ],
     avatarLifeContext: "strukturiert den Alltag eng um fixe Trainingseinheiten herum",
     avatarMembershipContext:
-      "nutzt vor allem die Flaeche und bewertet das Studio stark ueber Verlaesslichkeit",
+      "nutzt vor allem die Fläche und bewertet das Studio stark über Verlässlichkeit",
   },
   {
     avatarComplaintContext:
       "es gab widerspruechliche Aussagen zu Vertrag und Zusatzkosten",
     avatarComplaintGoal:
-      "klare Verantwortung und eine faire Klaerung statt weiterer Ausreden",
+      "klare Verantwortung und eine faire Klärung statt weiterer Ausreden",
     avatarComplaintHistory:
-      "hat schon beim Abschluss nach Transparenz gefragt und fuehlt sich jetzt getaeuscht",
+      "hat schon beim Abschluss nach Transparenz gefragt und fühlt sich jetzt getäuscht",
     avatarComplaintTopic: "Unklare Vertragskosten",
     avatarComplaintType: "Vertrauensbruch",
     avatarInnerAmplifiers: [
       "ist bei Geldthemen besonders sensibel",
-      "hat schlechte Erfahrungen mit frueheren Studios",
+      "hat schlechte Erfahrungen mit früheren Studios",
     ],
-    avatarLifeContext: "muss finanzielle Entscheidungen gerade besonders sauber abwaegen",
+    avatarLifeContext: "muss finanzielle Entscheidungen gerade besonders sauber abwägen",
     avatarMembershipContext:
-      "ist noch nicht lange dabei und prueft, ob das Studio ueberhaupt passt",
+      "ist noch nicht lange dabei und prüft, ob das Studio überhaupt passt",
   },
   {
     avatarComplaintContext:
-      "mehrfach versprochene Rueckrufe sind ausgeblieben und jede Person sagt etwas anderes",
+      "mehrfach versprochene Rückrufe sind ausgeblieben und jede Person sagt etwas anderes",
     avatarComplaintGoal:
-      "eine verbindliche Entscheidung statt weiterer Vertroestung",
+      "eine verbindliche Entscheidung statt weiterer Vertröstung",
     avatarComplaintHistory:
-      "hat schon mehrere Kontakte hinter sich, ohne dass jemand sichtbar Ownership uebernommen hat",
-    avatarComplaintTopic: "Rueckruf nie erfolgt",
+      "hat schon mehrere Kontakte hinter sich, ohne dass jemand sichtbar Ownership übernommen hat",
+    avatarComplaintTopic: "Rückruf nie erfolgt",
     avatarComplaintType: "Kommunikationschaos",
     avatarInnerAmplifiers: [
-      "fuehlt sich herumgeschoben",
-      "hat fuer solche Prozesse kaum Geduld",
+      "fühlt sich herumgeschoben",
+      "hat für solche Prozesse kaum Geduld",
     ],
-    avatarLifeContext: "hat einen dichten Alltag und wenig Toleranz fuer Organisationsfehler",
+    avatarLifeContext: "hat einen dichten Alltag und wenig Toleranz für Organisationsfehler",
     avatarMembershipContext:
-      "war eigentlich loyal, denkt inzwischen aber ueber einen Absprung nach",
+      "war eigentlich loyal, denkt inzwischen aber über einen Absprung nach",
   },
 ];
 
@@ -152,12 +152,12 @@ function buildComplaintTone(profile: SimulationAvatarProfile) {
       : profile.avatarDifficulty === "medium"
         ? "klar genervt"
         : profile.avatarDifficulty === "hard"
-          ? "spuerbar gereizt"
-          : "nahe an Gespraechsabbruch",
+          ? "spürbar gereizt"
+          : "nahe an Gesprächsabbruch",
     profile.avatarDiscType === "dominant"
       ? "druckvoll"
       : profile.avatarDiscType === "analytical"
-        ? "kuehl und pruefend"
+        ? "kühl und prüfend"
         : profile.avatarDiscType === "steady"
           ? "empfindlich und verletzt"
           : "sprunghaft und wechselhaft",
@@ -168,7 +168,7 @@ function buildComplaintTone(profile: SimulationAvatarProfile) {
 
 function buildOpeningMessage(avatar: ComplaintAvatarCandidate) {
   if (avatar.avatarDifficulty === "easy") {
-    return `Guten Tag, hier ist ${avatar.avatarName}. Ich moechte ein Anliegen einmal sauber klaeren: ${avatar.avatarComplaintContext}.`;
+    return `Guten Tag, hier ist ${avatar.avatarName}. Ich möchte ein Anliegen einmal sauber klären: ${avatar.avatarComplaintContext}.`;
   }
 
   if (avatar.avatarDifficulty === "medium") {
@@ -176,10 +176,10 @@ function buildOpeningMessage(avatar: ComplaintAvatarCandidate) {
   }
 
   if (avatar.avatarDifficulty === "hard") {
-    return `${avatar.avatarName} hier. Ich sage es direkt: ${avatar.avatarComplaintContext} und langsam habe ich wirklich das Gefuehl, dass mich hier niemand sauber ernst nimmt.`;
+    return `${avatar.avatarName} hier. Ich sage es direkt: ${avatar.avatarComplaintContext} und langsam habe ich wirklich das Gefühl, dass mich hier niemand sauber ernst nimmt.`;
   }
 
-  return `Hallo, hier ist ${avatar.avatarName}. Ehrlich gesagt bin ich kurz davor, das Gespraech gleich wieder zu beenden, weil ${avatar.avatarComplaintContext} und ich seit Laengerem nur vertroestet werde.`;
+  return `Hallo, hier ist ${avatar.avatarName}. Ehrlich gesagt bin ich kurz davor, das Gespräch gleich wieder zu beenden, weil ${avatar.avatarComplaintContext} und ich seit Längerem nur vertröstet werde.`;
 }
 
 export function selectComplaintAvatar(params: {
@@ -223,12 +223,12 @@ function formatAvatarSummaryLines(
     `- Kanal: ${avatar.avatarChannel}`,
     `- Beschwerdetyp: ${avatar.avatarComplaintType}`,
     `- Beschwerdeanlass: ${avatar.avatarComplaintTopic}`,
-    `- Konkreter Ausloeser: ${avatar.avatarComplaintContext}`,
+    `- Konkreter Auslöser: ${avatar.avatarComplaintContext}`,
     `- Mitgliedskontext: ${avatar.avatarMembershipContext}`,
     `- Alltagskontext: ${avatar.avatarLifeContext}`,
-    `- Frustrationsverstaerker: ${avatar.avatarInnerAmplifiers.join("; ")}`,
+    `- Frustrationsverstärker: ${avatar.avatarInnerAmplifiers.join("; ")}`,
     `- Vorgeschichte: ${avatar.avatarComplaintHistory}`,
-    `- Erwartung an das Gespraech: ${avatar.avatarComplaintGoal}`,
+    `- Erwartung an das Gespräch: ${avatar.avatarComplaintGoal}`,
     `- Emotionaler Ton: ${avatar.avatarEmotionalTone}`,
   ].join("\n");
 }
@@ -242,8 +242,8 @@ export function buildComplaintAvatarPrompt(
 
   const currentAvatar = context.currentAvatar;
   const blocks = [
-    `AVATAR-VORGABE FUER DIESE BESCHWERDE-SESSION:
-Bleibe exakt bei diesem Kundenprofil. Veraendere weder Kanal, Beschwerdebild, Historie noch Temperament.
+    `AVATAR-VORGABE FÜR DIESE BESCHWERDE-SESSION:
+Bleibe exakt bei diesem Kundenprofil. Verändere weder Kanal, Beschwerdebild, Historie noch Temperament.
 
 ${formatAvatarSummaryLines(currentAvatar)}
 
@@ -257,12 +257,12 @@ ${formatAvatarSummaryLines(currentAvatar)}
 - Difficulty: ${currentAvatar.avatarDifficulty} (${getDifficultyPromptGuidance(
       currentAvatar.avatarDifficulty
     )})
-- Typische Einwaende und Friktionen: ${currentAvatar.avatarObjections
+- Typische Einwände und Friktionen: ${currentAvatar.avatarObjections
       .map((entry) => formatObjectionType(entry))
       .join(", ")}
 
-Die Difficulty muss sich real zeigen in Geduld, Haerte, Abbruchneigung, Vertrauen und Loesungswahrscheinlichkeit.
-Der Disc-Typ muss Verhalten, Sprache und Reaktionstempo sichtbar praegen.`,
+Die Difficulty muss sich real zeigen in Geduld, Härte, Abbruchneigung, Vertrauen und Lösungswahrscheinlichkeit.
+Der Disc-Typ muss Verhalten, Sprache und Reaktionstempo sichtbar prägen.`,
   ];
 
   if (context.previousAvatar) {
@@ -277,11 +277,11 @@ Der letzte Beschwerde-Avatar war:
 ${formatAvatarSummaryLines(context.previousAvatar)}
 
 Die neue Session wurde bewusst deutlich anders angelegt.
-- Zielwert ist eine spuerbare Abweichung von rund 70 Prozent.
-- Bereits bewusst veraenderte Profil-Dimensionen: ${describeDifferenceDimensions(
+- Zielwert ist eine spürbare Abweichung von rund 70 Prozent.
+- Bereits bewusst veränderte Profil-Dimensionen: ${describeDifferenceDimensions(
         difference
       )}.
-- Wiederhole nicht denselben Grundkonflikt mit nur leicht veraenderten Details.`);
+- Wiederhole nicht denselben Grundkonflikt mit nur leicht veränderten Details.`);
   }
 
   return blocks.join("\n\n");

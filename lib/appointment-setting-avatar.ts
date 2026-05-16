@@ -57,30 +57,30 @@ const APPOINTMENT_SEEDS: readonly AppointmentSeed[] = [
   {
     leadSource: "Webseite",
     leadContext:
-      "hat sich ueber die Website eingetragen, weil das Thema Gesundheit und Alltagsenergie gerade wieder mehr Druck macht",
+      "hat sich über die Website eingetragen, weil das Thema Gesundheit und Alltagsenergie gerade wieder mehr Druck macht",
     leadGoal:
       "will herausfinden, ob ein Termin wirklich hilfreich ist oder nur der Einstieg in eine Verkaufsschleife",
   },
   {
     leadSource: "Anzeige",
     leadContext:
-      "kam ueber eine Anzeige auf das Angebot und filtert gerade streng, was echte Substanz hat und was nur Marketing ist",
+      "kam über eine Anzeige auf das Angebot und filtert gerade streng, was echte Substanz hat und was nur Marketing ist",
     leadGoal:
-      "will schnell erkennen, ob sich ein Termin lohnt und ob der Nutzen fuer die eigene Situation konkret ist",
+      "will schnell erkennen, ob sich ein Termin lohnt und ob der Nutzen für die eigene Situation konkret ist",
   },
   {
     leadSource: "Promo-Stand",
     leadContext:
-      "hat die Nummer eher spontan am Promo-Stand dagelassen und erinnert sich nur teilweise an das urspruengliche Gespraech",
+      "hat die Nummer eher spontan am Promo-Stand dagelassen und erinnert sich nur teilweise an das ursprüngliche Gespräch",
     leadGoal:
       "will verstehen, warum sich ein Termin jetzt konkret lohnt und ob das in die eigene Woche passt",
   },
   {
     leadSource: "Empfehlung",
     leadContext:
-      "kam ueber eine Empfehlung, will aber trotzdem selbst pruefen, ob der Termin wirklich individuell passt",
+      "kam über eine Empfehlung, will aber trotzdem selbst prüfen, ob der Termin wirklich individuell passt",
     leadGoal:
-      "will keine Standardberatung, sondern einen nachvollziehbaren Grund, warum das fuer die eigene Lage sinnvoll ist",
+      "will keine Standardberatung, sondern einen nachvollziehbaren Grund, warum das für die eigene Lage sinnvoll ist",
   },
 ];
 
@@ -91,18 +91,18 @@ function getRandomItem<T>(items: readonly T[]) {
 function buildLeadTone(profile: SimulationAvatarProfile) {
   const parts = [
     profile.avatarDifficulty === "easy"
-      ? "grundsaetzlich offen"
+      ? "grundsätzlich offen"
       : profile.avatarDifficulty === "medium"
         ? "vorsichtig interessiert"
         : profile.avatarDifficulty === "hard"
-          ? "skeptisch und pruefend"
+          ? "skeptisch und prüfend"
           : "extrem schwer zu binden",
     profile.avatarDiscType === "dominant"
       ? "direkt"
       : profile.avatarDiscType === "analytical"
         ? "sachlich"
         : profile.avatarDiscType === "steady"
-          ? "zurueckhaltend"
+          ? "zurückhaltend"
           : "sprunghaft",
   ];
 
@@ -127,14 +127,14 @@ function buildOpeningMessage(params: {
   }
 
   if (profile.avatarDifficulty === "medium") {
-    return `Ja, hallo, ${leadName} hier. Ich hatte mich mal eingetragen, bin aber noch nicht sicher, ob so ein Termin fuer mich gerade wirklich Sinn macht.`;
+    return `Ja, hallo, ${leadName} hier. Ich hatte mich mal eingetragen, bin aber noch nicht sicher, ob so ein Termin für mich gerade wirklich Sinn macht.`;
   }
 
   if (profile.avatarDifficulty === "hard") {
-    return `${leadName} hier. Ich habe nicht viel Zeit, also bitte direkt: Worum geht es genau und warum sollte ich dafuer jetzt einen Termin machen?`;
+    return `${leadName} hier. Ich habe nicht viel Zeit, also bitte direkt: Worum geht es genau und warum sollte ich dafür jetzt einen Termin machen?`;
   }
 
-  return `${leadName} hier. Ich sage direkt dazu: Ich bin bei sowas eher raus. Wenn das nur der naechste Standard-Pitch ist, koennen wir es auch kurz machen.`;
+  return `${leadName} hier. Ich sage direkt dazu: Ich bin bei sowas eher raus. Wenn das nur der nächste Standard-Pitch ist, können wir es auch kurz machen.`;
 }
 
 function buildAppointmentAvatar(params: {
@@ -189,7 +189,7 @@ function formatAvatarSummaryLines(
     `- Leadquelle: ${avatar.leadSource}`,
     `- Ausgangslage: ${avatar.leadContext}`,
     `- Ziel des Leads: ${avatar.leadGoal}`,
-    `- Ton im Gespraech: ${avatar.leadTone}`,
+    `- Ton im Gespräch: ${avatar.leadTone}`,
   ].join("\n");
 }
 
@@ -202,15 +202,15 @@ export function buildAppointmentAvatarPrompt(
 
   const currentAvatar = context.currentAvatar;
   const blocks = [
-    `AKTIVE LEAD-VORGABE FUER DIESE SESSION:
+    `AKTIVE LEAD-VORGABE FÜR DIESE SESSION:
 Bleibe durchgehend bei diesem Lead-Kontext. Erfinde keinen anderen Einstieg, keine andere Ausgangslage und keinen anderen Grundkontakt.
 
 ${formatAvatarSummaryLines(currentAvatar)}
 
-- Berufssituation praegt die Alltagshuerden: ${formatJobSituation(
+- Berufssituation prägt die Alltagshürden: ${formatJobSituation(
       currentAvatar.avatarJobSituation
     )}
-- Familiensituation praegt Verbindlichkeit und Prioritaeten: ${formatFamilySituation(
+- Familiensituation prägt Verbindlichkeit und Prioritäten: ${formatFamilySituation(
       currentAvatar.avatarFamilySituation
     )}
 - Zeitbudget: ${formatTimeBudget(currentAvatar.avatarTimeBudget)}
@@ -221,12 +221,12 @@ ${formatAvatarSummaryLines(currentAvatar)}
 - Difficulty: ${currentAvatar.avatarDifficulty} (${getDifficultyPromptGuidance(
       currentAvatar.avatarDifficulty
     )})
-- Typische Einwaende: ${currentAvatar.avatarObjections
+- Typische Einwände: ${currentAvatar.avatarObjections
       .map((entry) => formatObjectionType(entry))
       .join(", ")}
 
-Die Difficulty muss sich real zeigen in Offenheit, Geduld, Haerte der Einwaende, Bullshit-Bingo-Empfindlichkeit und Terminwahrscheinlichkeit.
-Der Disc-Typ muss das Verhalten spuerbar praegen, nicht nur als Metadaten bestehen.`,
+Die Difficulty muss sich real zeigen in Offenheit, Geduld, Härte der Einwände, Bullshit-Bingo-Empfindlichkeit und Terminwahrscheinlichkeit.
+Der Disc-Typ muss das Verhalten spürbar prägen, nicht nur als Metadaten bestehen.`,
   ];
 
   if (context.previousAvatar) {
@@ -241,11 +241,11 @@ Der letzte Lead-Avatar war:
 ${formatAvatarSummaryLines(context.previousAvatar)}
 
 Der neue Avatar wurde bewusst deutlich anders gebaut.
-- Zielwert ist eine spuerbare Abweichung von rund 70 Prozent.
-- Bereits bewusst veraenderte Profil-Dimensionen: ${describeDifferenceDimensions(
+- Zielwert ist eine spürbare Abweichung von rund 70 Prozent.
+- Bereits bewusst veränderte Profil-Dimensionen: ${describeDifferenceDimensions(
         difference
       )}.
-- Wiederhole nicht dieselbe Grundfigur mit nur kosmetischen Aenderungen.`);
+- Wiederhole nicht dieselbe Grundfigur mit nur kosmetischen Änderungen.`);
   }
 
   return blocks.join("\n\n");

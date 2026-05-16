@@ -95,17 +95,17 @@ const SKEPTICAL_REACTIONS_BY_SCENARIO: Record<
 > = {
   appointment_setting: [
     "Das klingt gerade ziemlich nach Standardtext.",
-    "Okay, aber warum sollte ich dafuer jetzt wirklich einen Termin machen?",
-    "So aehnlich wurde ich schon mal angerufen.",
-    "Was ist daran fuer mich konkret anders als bei allen anderen Calls?",
+    "Okay, aber warum sollte ich dafür jetzt wirklich einen Termin machen?",
+    "So ähnlich wurde ich schon mal angerufen.",
+    "Was ist daran für mich konkret anders als bei allen anderen Calls?",
     "Nur mit so einer Standardaussage bin ich noch nicht bei einem Termin.",
   ],
   complaint_management: [
-    "Ich brauche gerade keine Floskel, sondern eine klare Loesung.",
+    "Ich brauche gerade keine Floskel, sondern eine klare Lösung.",
     "Das klingt nett, beantwortet mein Problem aber noch nicht.",
     "Solche Standardantworten habe ich vorher auch schon bekommen.",
-    "Was heisst das jetzt konkret fuer meinen Fall?",
-    "Damit ist mein Anliegen noch nicht wirklich geklaert.",
+    "Was heißt das jetzt konkret für meinen Fall?",
+    "Damit ist mein Anliegen noch nicht wirklich geklärt.",
   ],
   full_sales: [
     "Das sagen irgendwie alle.",
