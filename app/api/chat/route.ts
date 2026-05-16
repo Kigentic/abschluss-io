@@ -22,7 +22,7 @@ import {
   isCompletedFullSalesConversation,
 } from "@/lib/chat-session";
 import { detectSimulationBullshitBingo } from "@/lib/full-sales-bullshit-bingo";
-import type { FullSalesAvatarSnapshot } from "@/lib/full-sales-avatar";
+import { buildFullSalesAvatarPrompt, type FullSalesAvatarSnapshot } from "@/lib/full-sales-avatar";
 import { detectFullSalesObjectionRepetition } from "@/lib/full-sales-repetition";
 import { getSystemPrompt } from "@/lib/chat-prompts";
 import { extractKpiUpdateFromAssistantMessage } from "@/lib/full-sales-kpi-parser";
@@ -596,15 +596,38 @@ export async function POST(request: Request) {
       );
     }
 
-    let resolvedSystemPrompt = getSystemPrompt({
-      appointmentAvatarContext,
-      complaintAvatarContext,
-      fullSalesAvatarContext,
-      industryKey,
-      sessionId: session.id,
-      sessionTitle: session.title,
-      sessionType: session.session_type,
-    });
+    let industryDbPrompt: string | null = null;
+    if (session.session_type === "full_sales") {
+      const { data: industryPromptRow } = await supabase
+        .from("industry_prompts")
+        .select("master_prompt")
+        .eq("industry_key", industryKey)
+        .eq("is_active", true)
+        .limit(1)
+        .maybeSingle();
+      if (industryPromptRow?.master_prompt) {
+        industryDbPrompt = industryPromptRow.master_prompt;
+      }
+    }
+
+    let resolvedSystemPrompt: string;
+    if (industryDbPrompt) {
+      const parts: string[] = [industryDbPrompt];
+      if (fullSalesAvatarContext) {
+        parts.push(buildFullSalesAvatarPrompt(fullSalesAvatarContext));
+      }
+      resolvedSystemPrompt = parts.join("\n\n");
+    } else {
+      resolvedSystemPrompt = getSystemPrompt({
+        appointmentAvatarContext,
+        complaintAvatarContext,
+        fullSalesAvatarContext,
+        industryKey,
+        sessionId: session.id,
+        sessionTitle: session.title,
+        sessionType: session.session_type,
+      });
+    }
     const simulationBullshitBingo =
       session.session_type === "full_sales" ||
       session.session_type === "appointment_setting" ||
