@@ -105,9 +105,13 @@ export function selectFullSalesAvatar(params: {
   previousAvatar?: FullSalesAvatarSnapshot | null;
   sessionHistory?: FullSalesAvatarHistoryEntry[];
 }): FullSalesAvatarSelection {
+  const MIN_DIFFERENCE_RATIO = 0.8;
+  const MAX_ATTEMPTS = 40;
   const history = params.sessionHistory ?? [];
   const blockedNames = new Set(history.map((h) => h.avatarName));
   const blockedProfessions = new Set(history.map((h) => h.avatarProfessionOrContext));
+  const previousPrimaryProblem = params.previousAvatar?.avatarPrimaryProblem.trim().toLowerCase();
+  const previousGoal = params.previousAvatar?.avatarGoal.trim().toLowerCase();
 
   function tryBuildAvatar(): { avatar: FullSalesAvatar; comparison: SimulationAvatarDifference | null } {
     const selection = selectDiverseSimulationAvatarProfile({
@@ -128,7 +132,23 @@ export function selectFullSalesAvatar(params: {
     const availableCandidates = candidatePool.filter(
       (c) => !blockedNames.has(c.avatarName) && !blockedProfessions.has(c.avatarProfessionOrContext)
     );
-    const effectiveCandidates = availableCandidates.length > 0 ? availableCandidates : candidatePool;
+    const withoutPreviousScenario = availableCandidates.filter((candidate) => {
+      const candidateProblem = candidate.avatarPrimaryProblem.trim().toLowerCase();
+      const candidateGoal = candidate.avatarGoal.trim().toLowerCase();
+      if (previousPrimaryProblem && candidateProblem === previousPrimaryProblem) {
+        return false;
+      }
+      if (previousGoal && candidateGoal === previousGoal) {
+        return false;
+      }
+      return true;
+    });
+    const effectiveCandidates =
+      withoutPreviousScenario.length > 0
+        ? withoutPreviousScenario
+        : availableCandidates.length > 0
+          ? availableCandidates
+          : candidatePool;
 
     const scenarioSeed = getRandomItem(effectiveCandidates);
     const avatarName = maybeUseAlternativeName(
@@ -152,21 +172,39 @@ export function selectFullSalesAvatar(params: {
     return { avatar, comparison: selection.comparison };
   }
 
-  const first = tryBuildAvatar();
+  let bestAttempt = tryBuildAvatar();
+  for (let attemptIndex = 0; attemptIndex < MAX_ATTEMPTS; attemptIndex += 1) {
+    const currentAttempt = attemptIndex === 0 ? bestAttempt : tryBuildAvatar();
+    if (
+      !bestAttempt.comparison ||
+      (currentAttempt.comparison &&
+        currentAttempt.comparison.differingDimensions.length >
+          (bestAttempt.comparison?.differingDimensions.length ?? 0))
+    ) {
+      bestAttempt = currentAttempt;
+    }
 
-  // PROBLEM 2: age±5 + gender collision → retry once
-  const hasAgeGenderCollision = history.some(
-    (h) =>
-      h.avatarGender === first.avatar.avatarGender &&
-      Math.abs(h.avatarAge - first.avatar.avatarAge) <= 5
-  );
+    // PROBLEM 2: age±5 + gender collision
+    const hasAgeGenderCollision = history.some(
+      (h) =>
+        h.avatarGender === currentAttempt.avatar.avatarGender &&
+        Math.abs(h.avatarAge - currentAttempt.avatar.avatarAge) <= 5
+    );
+    if (hasAgeGenderCollision) {
+      continue;
+    }
 
-  if (!hasAgeGenderCollision) {
-    return { avatar: first.avatar, comparison: first.comparison };
+    // Enforce >=80% profile difference to previous avatar when one exists.
+    if (params.previousAvatar && currentAttempt.comparison) {
+      if (currentAttempt.comparison.differenceRatio < MIN_DIFFERENCE_RATIO) {
+        continue;
+      }
+    }
+
+    return currentAttempt;
   }
 
-  const second = tryBuildAvatar();
-  return { avatar: second.avatar, comparison: second.comparison };
+  return bestAttempt;
 }
 
 function formatAvatarSummaryLines(avatar: FullSalesAvatar | FullSalesAvatarSnapshot) {
