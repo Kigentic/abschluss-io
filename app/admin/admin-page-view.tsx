@@ -353,8 +353,8 @@ export function AdminPageView() {
         if (response.status === 403) {
           if (isActive) {
             setIsForbidden(true);
+            setError(responseBody.error ?? "");
             setIsLoading(false);
-            router.replace("/dashboard");
           }
           return;
         }
