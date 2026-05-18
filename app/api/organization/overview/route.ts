@@ -19,6 +19,10 @@ import {
   isOrganizationAdminAuthFailure,
   requireOrganizationAdmin,
 } from "@/lib/organization-admin-server";
+import {
+  getSupabaseServerClient,
+  getSupabaseServiceRoleClient,
+} from "@/lib/supabase-server";
 
 type SubscriptionRecord = {
   current_period_end: string | null;
@@ -87,8 +91,55 @@ export async function GET(request: Request) {
     );
 
     if (isOrganizationAdminAuthFailure(authResult)) {
+      let debug:
+        | {
+            memberships: Array<{
+              organization_id: string;
+              role_in_org: string;
+            }>;
+            tokenUserId: string | null;
+            profile: { is_active: boolean; role: string | null } | null;
+          }
+        | undefined;
+      if (authResult.status === 403) {
+        const authorizationHeader = request.headers.get("authorization");
+        const accessToken = authorizationHeader?.startsWith("Bearer ")
+          ? authorizationHeader.slice("Bearer ".length)
+          : undefined;
+        const tokenClient = accessToken ? getSupabaseServerClient(accessToken) : null;
+        const serviceRoleClient = getSupabaseServiceRoleClient();
+        const {
+          data: { user },
+        } = tokenClient ? await tokenClient.auth.getUser() : { data: { user: null } };
+
+        let profile: { is_active: boolean; role: string | null } | null = null;
+        let memberships: Array<{ organization_id: string; role_in_org: string }> = [];
+        if (user?.id && serviceRoleClient) {
+          const [{ data: profileData }, { data: membershipsData }] = await Promise.all([
+            serviceRoleClient
+              .from("profiles")
+              .select("role, is_active")
+              .eq("id", user.id)
+              .maybeSingle<{ is_active: boolean; role: string | null }>(),
+            serviceRoleClient
+              .from("organization_members")
+              .select("organization_id, role_in_org")
+              .eq("user_id", user.id),
+          ]);
+          profile = profileData ?? null;
+          memberships = (membershipsData ??
+            []) as Array<{ organization_id: string; role_in_org: string }>;
+        }
+
+        debug = {
+          memberships,
+          tokenUserId: user?.id ?? null,
+          profile,
+        };
+      }
+
       return NextResponse.json(
-        { error: authResult.error },
+        { debug, error: authResult.error },
         { status: authResult.status }
       );
     }

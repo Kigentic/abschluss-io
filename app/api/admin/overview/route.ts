@@ -11,7 +11,11 @@ import {
 import { isAdminAuthFailure, requireMasterAdmin } from "@/lib/admin-server";
 import { getLatestCopeCartSubscriptionsForOrganizations } from "@/lib/copecart-subscriptions";
 import { resolveIndustrySettings } from "@/lib/industries";
-import type { SupabaseServerClient } from "@/lib/supabase-server";
+import {
+  getSupabaseServerClient,
+  getSupabaseServiceRoleClient,
+  type SupabaseServerClient,
+} from "@/lib/supabase-server";
 
 type OrganizationRecord = {
   created_at: string;
@@ -175,8 +179,41 @@ export async function GET(request: Request) {
     );
 
     if (isAdminAuthFailure(adminAuth)) {
+      let debug:
+        | {
+            tokenUserId: string | null;
+            profile: { is_active: boolean; role: string | null } | null;
+          }
+        | undefined;
+      if (adminAuth.status === 403) {
+        const authorizationHeader = request.headers.get("authorization");
+        const accessToken = authorizationHeader?.startsWith("Bearer ")
+          ? authorizationHeader.slice("Bearer ".length)
+          : undefined;
+        const tokenClient = accessToken ? getSupabaseServerClient(accessToken) : null;
+        const serviceRoleClient = getSupabaseServiceRoleClient();
+        const {
+          data: { user },
+        } = tokenClient ? await tokenClient.auth.getUser() : { data: { user: null } };
+
+        let profile: { is_active: boolean; role: string | null } | null = null;
+        if (user?.id && serviceRoleClient) {
+          const { data } = await serviceRoleClient
+            .from("profiles")
+            .select("role, is_active")
+            .eq("id", user.id)
+            .maybeSingle<{ is_active: boolean; role: string | null }>();
+          profile = data ?? null;
+        }
+
+        debug = {
+          tokenUserId: user?.id ?? null,
+          profile,
+        };
+      }
+
       return NextResponse.json(
-        { error: adminAuth.error },
+        { debug, error: adminAuth.error },
         { status: adminAuth.status }
       );
     }
