@@ -80,7 +80,15 @@ export function InternalAppShell({
           return;
         }
 
-        const [{ data: membership }, { data: profile }] = await Promise.all([
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const accessToken = session?.access_token;
+
+        const [
+          { data: membership, error: membershipError },
+          { data: profile, error: profileError },
+        ] = await Promise.all([
           supabase
             .from("organization_members")
             .select("role_in_org")
@@ -94,10 +102,29 @@ export function InternalAppShell({
             .maybeSingle<ProfileRecord>(),
         ]);
 
+        if (profileError) {
+          throw profileError;
+        }
+
+        if (membershipError) {
+          throw membershipError;
+        }
+
+        let hasMasterAdminAccess = profile?.role === "master_admin";
+
+        if (!hasMasterAdminAccess && accessToken) {
+          const adminAccessResponse = await fetch("/api/admin/overview", {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          hasMasterAdminAccess = adminAccessResponse.ok;
+        }
+
         if (isActive) {
-          setCanAccessAdmin(profile?.role === "master_admin");
+          setCanAccessAdmin(hasMasterAdminAccess);
           setCanManageOrganization(
-            profile?.role === "master_admin" || membership?.role_in_org === "admin"
+            hasMasterAdminAccess || membership?.role_in_org === "admin"
           );
           setIsNavLoading(false);
         }
