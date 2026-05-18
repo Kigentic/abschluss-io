@@ -68,8 +68,12 @@ export function InternalAppShell({
         }
 
         const {
-          data: { user },
+          data: { user: authUser },
         } = await supabase.auth.getUser();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const user = authUser ?? session?.user ?? null;
 
         if (!user) {
           if (isActive) {
