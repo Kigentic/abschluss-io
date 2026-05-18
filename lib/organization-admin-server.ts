@@ -159,7 +159,7 @@ export async function requireOrganizationAdmin(
 
   const { data: membership, error: membershipError } = await (isMasterAdmin
     ? membershipQuery.limit(1).maybeSingle<MembershipRecord>()
-    : membershipQuery.eq("role_in_org", "admin").limit(1).maybeSingle<MembershipRecord>());
+    : membershipQuery.limit(1).maybeSingle<MembershipRecord>());
 
   if (membershipError) {
     await logSystemEvent({
@@ -221,6 +221,13 @@ export async function requireOrganizationAdmin(
   if (!membership.organizations.is_active) {
     return {
       error: "Diese Organisation ist derzeit deaktiviert.",
+      status: 403,
+    };
+  }
+
+  if (!isMasterAdmin && membership.organizations.seat_limit <= 1) {
+    return {
+      error: "Kein Zugriff auf diese Organisations-Verwaltung.",
       status: 403,
     };
   }

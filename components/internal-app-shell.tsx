@@ -13,6 +13,9 @@ type InternalAppShellProps = {
 };
 
 type OrganizationMembership = {
+  organizations: {
+    seat_limit: number | null;
+  } | null;
   role_in_org: string;
 };
 
@@ -74,7 +77,6 @@ export function InternalAppShell({
           data: { session },
         } = await supabase.auth.getSession();
         const user = authUser ?? session?.user ?? null;
-        const accessToken = session?.access_token;
 
         if (!user) {
           if (isActive) {
@@ -91,7 +93,7 @@ export function InternalAppShell({
         ] = await Promise.all([
           supabase
             .from("organization_members")
-            .select("role_in_org")
+            .select("role_in_org, organizations(seat_limit)")
             .eq("user_id", user.id)
             .limit(1)
             .maybeSingle<OrganizationMembership>(),
@@ -112,9 +114,11 @@ export function InternalAppShell({
 
         if (isActive) {
           const hasMasterAdminAccess = profile?.role === "master_admin";
+          const hasTeamOrEnterpriseAccess =
+            (membership?.organizations?.seat_limit ?? 1) > 1;
           setCanAccessAdmin(hasMasterAdminAccess);
           setCanManageOrganization(
-            hasMasterAdminAccess || membership?.role_in_org === "admin"
+            hasMasterAdminAccess || hasTeamOrEnterpriseAccess
           );
           setIsNavLoading(false);
         }
