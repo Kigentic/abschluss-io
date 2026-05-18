@@ -1,7 +1,7 @@
 import type { IndustryPromptConfig } from "@/lib/prompts/types";
 
 export const physioPromptConfig: IndustryPromptConfig = {
-  industryKey: "physio",
+  industryKey: "fitness",
   blocks: {
     appointmentSetting: `Telefontraining in Studio-/Lead-Setting:
 - Nutze auch innerhalb dieser Branche ausschließlich das Terminsetting-Szenario für einen kostenlosen 60-minütigen Beratungstermin.

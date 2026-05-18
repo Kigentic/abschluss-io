@@ -1,7 +1,7 @@
 import type { IndustryPromptConfig } from "@/lib/prompts/types";
 
 export const automotivePromptConfig: IndustryPromptConfig = {
-  industryKey: "automotive",
+  industryKey: "franchise",
   blocks: {
     appointmentSetting: `Telefontraining in Studio-/Lead-Setting:
 - Dieses Modul bleibt bewusst ein Fitness-/Boutique-Studio-Terminsetting-Call.

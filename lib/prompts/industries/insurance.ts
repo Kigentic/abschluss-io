@@ -1,7 +1,7 @@
 import type { IndustryPromptConfig } from "@/lib/prompts/types";
 
 export const insurancePromptConfig: IndustryPromptConfig = {
-  industryKey: "insurance",
+  industryKey: "finance",
   blocks: {
     appointmentSetting: `Telefontraining in Studio-/Lead-Setting:
 - Dieses Modul bleibt bewusst ein Fitness-/Boutique-Studio-Terminsetting-Call.
