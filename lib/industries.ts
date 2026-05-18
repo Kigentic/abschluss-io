@@ -2,9 +2,8 @@ import type { SupabaseServerClient } from "@/lib/supabase-server";
 
 export const INDUSTRY_KEYS = [
   "fitness",
-  "automotive",
-  "insurance",
-  "physio",
+  "finance",
+  "franchise",
   "energy",
 ] as const;
 
@@ -13,11 +12,10 @@ export type IndustryKey = (typeof INDUSTRY_KEYS)[number];
 export const DEFAULT_INDUSTRY_KEY: IndustryKey = "fitness";
 
 export const INDUSTRY_LABELS: Record<IndustryKey, string> = {
-  automotive: "Automotive",
-  energy: "Energy",
+  energy: "Energie",
+  finance: "Finanzen",
   fitness: "Fitness",
-  insurance: "Insurance",
-  physio: "Physio",
+  franchise: "Franchise",
 };
 
 export const INDUSTRY_OPTIONS = INDUSTRY_KEYS.map((industryKey) => ({

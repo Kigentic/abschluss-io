@@ -1,17 +1,15 @@
 import type { IndustryKey } from "@/lib/industries";
-import { automotivePromptConfig } from "@/lib/prompts/industries/automotive";
 import { energyPromptConfig } from "@/lib/prompts/industries/energy";
+import { financePromptConfig } from "@/lib/prompts/industries/finance";
 import { fitnessPromptConfig } from "@/lib/prompts/industries/fitness";
-import { insurancePromptConfig } from "@/lib/prompts/industries/insurance";
-import { physioPromptConfig } from "@/lib/prompts/industries/physio";
+import { franchisePromptConfig } from "@/lib/prompts/industries/franchise";
 import type { IndustryPromptConfig } from "@/lib/prompts/types";
 
 const PROMPT_CONFIG_BY_INDUSTRY: Record<IndustryKey, IndustryPromptConfig> = {
-  automotive: automotivePromptConfig,
   energy: energyPromptConfig,
+  finance: financePromptConfig,
   fitness: fitnessPromptConfig,
-  insurance: insurancePromptConfig,
-  physio: physioPromptConfig,
+  franchise: franchisePromptConfig,
 };
 
 export function getIndustryPromptConfig(industryKey: IndustryKey) {
