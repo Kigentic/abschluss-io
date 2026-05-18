@@ -3,14 +3,15 @@ import type { IndustryPromptConfig } from "@/lib/prompts/types";
 export const energyPromptConfig: IndustryPromptConfig = {
   industryKey: "energy",
   blocks: {
-    appointmentSetting: `Telefontraining in Studio-/Lead-Setting:
-- Dieses Modul bleibt bewusst ein Fitness-/Boutique-Studio-Terminsetting-Call.
-- Ziel ist ausschließlich die Vereinbarung eines kostenlosen 60-minütigen Beratungstermins, optional mit Probetraining.
-- Keine studio-spezifischen USPs voraussetzen.`,
-    complaintManagement: `Beschwerdemanagement in Studio-/Lead-Setting:
-- Dieses Modul bleibt bewusst ein Fitness-/Boutique-Studio-Beschwerdegespräch.
-- Fokus sind Deeskalation, Klärung und professionelle Lösung von Kundenbeschwerden im Studioalltag.`,
-    shared: `Aktive Branche: Energy / Energieberatung / Energievertrieb.
+    appointmentSetting: `Telefontraining in Energieberatung / Energievertrieb:
+- Das Szenario ist immer ein telefonischer Rückruf oder Follow-up mit einem Lead.
+- Ziel ist ausschließlich die Vereinbarung eines kostenlosen 60-minütigen Beratungstermins.
+- Nutze keine fiktiven Sonderangebote, Markenclaims oder Anbieter-USPs als Voraussetzung.`,
+    complaintManagement: `Beschwerdemanagement in Energieberatung / Energievertrieb:
+- Das Szenario ist immer ein realistisches Beschwerdegespräch mit einem bestehenden Kunden.
+- Fokus sind Deeskalation, saubere Klärung und eine glaubwürdige Lösung im Versorgungs- und Servicealltag.
+- Nutze alltagsnahe Beschwerdegründe wie Abrechnung, Abschlag, Erreichbarkeit, Vertragsklarheit, Lieferzeit oder Servicequalität.`,
+    shared: `Aktive Branche: Energieberatung / Energievertrieb.
 
 Branchenschwerpunkte:
 - Ziele wie Kosten senken, Versorgung absichern, nachhaltiger werden, Photovoltaik prüfen, Tarif optimieren oder langfristig planbarer wirtschaften.
@@ -21,10 +22,10 @@ Branchenschwerpunkte:
 - In Modul 2 reagierst du nur auf Tarife, Energieberatung, PV-, Speicher- oder Versorgungskonzepte.
 - In Modul 3 bringst typische Energy-Einwände wie Preis, Vertragsbindung, Vergleich mit Wettbewerbern, technische Unsicherheit, Investitionshöhe oder Zweifel am Wechselnutzen.
 - Beispielhafte Szenarien: Tarifwechsel im Haushalt, Gewerbekunde mit hohem Verbrauch, Interesse an Photovoltaik, Unsicherheit bei Speicherlösung, Ladeinfrastruktur für Firmenstandort.`,
-    freeChat: `Freies Training in Energy:
+    freeChat: `Freies Training in Energieberatung / Energievertrieb:
 - Du trainierst beliebige Verkaufssituationen rund um Tarifberatung, Energieoptimierung, Photovoltaik, Speicher, Wechsel und Abschluss.
-- Wenn der User unklar bleibt, schlage eine realistische Energy-Situation vor.`,
-    situationCoaching: `Situationscoaching in Energy:
+- Wenn der User unklar bleibt, schlage eine realistische Energie-Situation vor.`,
+    situationCoaching: `Situationscoaching in Energieberatung / Energievertrieb:
 - Analysiere Verkaufssituationen rund um Preisargumentation, Wechselbarrieren, Investitionsentscheidungen, technische Erklärung und Vertrauensaufbau.
 - Achte besonders darauf, ob der User Wirtschaftlichkeit, Verständlichkeit und Sicherheit sauber aufgebaut hat.`,
   },
