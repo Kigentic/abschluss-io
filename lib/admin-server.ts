@@ -29,10 +29,6 @@ function isFailure(result: AdminAuthResult): result is AdminAuthFailure {
   return "status" in result;
 }
 
-function normalizeEmail(email: string | null | undefined) {
-  return (email ?? "").trim().toLowerCase();
-}
-
 export async function requireMasterAdmin(
   authorizationHeader: string | null
 ): Promise<AdminAuthResult> {
@@ -114,34 +110,7 @@ export async function requireMasterAdmin(
     };
   }
 
-  const isMasterAdmin = profile.role === "master_admin";
-  const isPrimaryPlatformAdmin = normalizeEmail(user.email) === "io@abschluss-io.de";
-
-  if (!isMasterAdmin && isPrimaryPlatformAdmin) {
-    const { data: promotedProfile, error: promoteError } = await serviceRoleClient
-      .from("profiles")
-      .update({ role: "master_admin", is_active: true })
-      .eq("id", user.id)
-      .select("role, is_active")
-      .maybeSingle<AdminProfile>();
-
-    if (promoteError) {
-      return {
-        error: promoteError.message,
-        status: 500,
-      };
-    }
-
-    if (promotedProfile?.role === "master_admin" && promotedProfile.is_active) {
-      return {
-        serviceRoleClient,
-        supabase,
-        userId: user.id,
-      };
-    }
-  }
-
-  if (!isMasterAdmin) {
+  if (profile.role !== "master_admin") {
     return {
       error: "Kein Zugriff auf diese Verwaltung.",
       status: 403,

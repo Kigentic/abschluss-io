@@ -43,10 +43,6 @@ export type OrganizationAdminAuthResult =
   | OrganizationAdminAuthFailure
   | OrganizationAdminAuthSuccess;
 
-function normalizeEmail(email: string | null | undefined) {
-  return (email ?? "").trim().toLowerCase();
-}
-
 export async function requireOrganizationAdmin(
   authorizationHeader: string | null
 ): Promise<OrganizationAdminAuthResult> {
@@ -128,26 +124,7 @@ export async function requireOrganizationAdmin(
     };
   }
 
-  const isPrimaryPlatformAdmin = normalizeEmail(user.email) === "io@abschluss-io.de";
-  let isMasterAdmin = profile.role === "master_admin";
-
-  if (!isMasterAdmin && isPrimaryPlatformAdmin) {
-    const { data: promotedProfile, error: promoteError } = await serviceRoleClient
-      .from("profiles")
-      .update({ role: "master_admin", is_active: true })
-      .eq("id", user.id)
-      .select("role, is_active")
-      .maybeSingle<ProfileRecord>();
-
-    if (promoteError) {
-      return {
-        error: promoteError.message,
-        status: 500,
-      };
-    }
-
-    isMasterAdmin = promotedProfile?.role === "master_admin";
-  }
+  const isMasterAdmin = profile.role === "master_admin";
 
   if (!isMasterAdmin) {
     const accessState = await resolveAppAccessStateForUser({
@@ -189,35 +166,6 @@ export async function requireOrganizationAdmin(
       error: membershipError.message,
       status: 500,
     };
-  }
-
-  if (!membership?.organizations && isPrimaryPlatformAdmin) {
-    const { data: recoveredMembership, error: recoveredMembershipError } =
-      await serviceRoleClient
-        .from("organization_members")
-        .select(
-          "organization_id, role_in_org, organizations!inner(id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked)"
-        )
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle<MembershipRecord>();
-
-    if (recoveredMembershipError) {
-      return {
-        error: recoveredMembershipError.message,
-        status: 500,
-      };
-    }
-
-    if (recoveredMembership?.organizations?.is_active) {
-      return {
-        membership: recoveredMembership,
-        serviceRoleClient,
-        supabase,
-        userId: user.id,
-      };
-    }
   }
 
   if (!membership?.organizations) {
