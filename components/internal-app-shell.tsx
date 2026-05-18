@@ -74,6 +74,7 @@ export function InternalAppShell({
           data: { session },
         } = await supabase.auth.getSession();
         const user = authUser ?? session?.user ?? null;
+        const accessToken = session?.access_token;
 
         if (!user) {
           if (isActive) {
@@ -109,8 +110,17 @@ export function InternalAppShell({
           throw membershipError;
         }
 
+        let hasMasterAdminAccess = profile?.role === "master_admin";
+        if (!hasMasterAdminAccess && accessToken) {
+          const adminProbe = await fetch("/api/admin/overview", {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          hasMasterAdminAccess = adminProbe.ok;
+        }
+
         if (isActive) {
-          const hasMasterAdminAccess = profile?.role === "master_admin";
           setCanAccessAdmin(hasMasterAdminAccess);
           setCanManageOrganization(
             hasMasterAdminAccess || membership?.role_in_org === "admin"
