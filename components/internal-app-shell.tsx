@@ -112,8 +112,14 @@ export function InternalAppShell({
 
     void loadNavigationState();
 
+    const supabase = getSupabaseBrowserClient();
+    const authListener = supabase?.auth.onAuthStateChange(() => {
+      void loadNavigationState();
+    });
+
     return () => {
       isActive = false;
+      authListener?.data.subscription.unsubscribe();
     };
   }, []);
 
