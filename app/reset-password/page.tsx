@@ -61,6 +61,8 @@ export default function ResetPasswordPage() {
 
       const hashParams = getHashParams();
       const hashErrorDescription = hashParams.get("error_description");
+      const hashAccessToken = hashParams.get("access_token");
+      const hashRefreshToken = hashParams.get("refresh_token");
 
       if (hashErrorDescription) {
         if (isMounted) {
@@ -74,6 +76,17 @@ export default function ResetPasswordPage() {
       const code = url.searchParams.get("code");
 
       try {
+        if (hashAccessToken && hashRefreshToken) {
+          const { error: setSessionError } = await supabase.auth.setSession({
+            access_token: hashAccessToken,
+            refresh_token: hashRefreshToken,
+          });
+
+          if (setSessionError) {
+            throw setSessionError;
+          }
+        }
+
         if (code) {
           const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(
             code
