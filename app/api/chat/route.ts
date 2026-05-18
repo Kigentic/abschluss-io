@@ -400,6 +400,7 @@ export async function POST(request: Request) {
 
     let fullSalesAvatarContext: {
       currentAvatar: FullSalesAvatarSnapshot;
+      industryKey?: FullSalesAvatarSnapshot["industryKey"];
       previousAvatar?: FullSalesAvatarSnapshot | null;
     } | null = null;
     let appointmentAvatarContext: {
@@ -511,6 +512,7 @@ export async function POST(request: Request) {
 
         fullSalesAvatarContext = {
           currentAvatar: mappedCurrentAvatar,
+          industryKey: mappedCurrentAvatar.industryKey,
           previousAvatar,
         };
       }

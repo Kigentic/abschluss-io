@@ -597,6 +597,7 @@ export async function POST(request: Request) {
       const selection = selectFullSalesAvatar({
         candidates: industryPromptConfig.openings.fullSales,
         difficulty: automaticDifficulty ?? "medium",
+        industryKey: industrySettings.industryKey,
         previousAvatar,
         sessionHistory,
       });

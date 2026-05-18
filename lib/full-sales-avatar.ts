@@ -55,6 +55,7 @@ export type FullSalesAvatarSnapshot = FullSalesAvatarCore & {
 
 export type FullSalesAvatarPromptContext = {
   currentAvatar: FullSalesAvatar | FullSalesAvatarSnapshot;
+  industryKey?: IndustryKey;
   previousAvatar?: FullSalesAvatar | FullSalesAvatarSnapshot | null;
 };
 
@@ -99,9 +100,51 @@ function buildOpeningMessage(avatar: FullSalesAvatar) {
   return `Hallo, ich bin ${avatar.avatarName}. Ich will direkt ehrlich sein: ${avatar.avatarPrimaryProblem} nervt mich zwar, aber ich bin gerade kaum überzeugt, dass so ein Gespräch für mich wirklich etwas verändert.`;
 }
 
+function getDiscColorLabel(discType: FullSalesAvatar["avatarDiscType"]) {
+  switch (discType) {
+    case "dominant":
+      return "Rot (D)";
+    case "experimental":
+      return "Gelb (I)";
+    case "steady":
+      return "Gruen (S)";
+    case "analytical":
+      return "Blau (G)";
+    default:
+      return discType;
+  }
+}
+
+function getEnergyCreditOpennessHint(avatar: FullSalesAvatar) {
+  if (avatar.avatarDiscType === "steady" || avatar.avatarDiscType === "experimental") {
+    return "Kreditoffenheit: eher zurueckhaltend. Nur offen, wenn Risikoarmut, Planbarkeit und Sicherheit klar belegt sind.";
+  }
+
+  return "Kreditoffenheit: grundsaetzlich offen, wenn Wirtschaftlichkeit, Risiko und Rueckzahlbarkeit sauber belegt sind.";
+}
+
+function getEnergyObjectionsByDisc(
+  discType: FullSalesAvatar["avatarDiscType"]
+): FullSalesAvatar["avatarObjections"] {
+  if (discType === "dominant") {
+    return ["price", "time", "skepticism_about_support"];
+  }
+
+  if (discType === "analytical") {
+    return ["need_to_think", "low_trust", "uncertainty"];
+  }
+
+  if (discType === "steady") {
+    return ["uncertainty", "need_to_think", "partner_approval"];
+  }
+
+  return ["need_to_think", "fear_of_commitment", "uncertainty"];
+}
+
 export function selectFullSalesAvatar(params: {
   candidates: readonly FullSalesAvatarCandidate[];
   difficulty: SessionDifficulty;
+  industryKey?: IndustryKey;
   previousAvatar?: FullSalesAvatarSnapshot | null;
   sessionHistory?: FullSalesAvatarHistoryEntry[];
 }): FullSalesAvatarSelection {
@@ -167,6 +210,26 @@ export function selectFullSalesAvatar(params: {
       avatarSecondaryContext: scenarioSeed.avatarSecondaryContext,
       openingMessage: "",
     } satisfies FullSalesAvatar;
+
+    if (params.industryKey === "energy") {
+      avatar.avatarAge = Math.max(40, Math.min(80, scenarioSeed.avatarAge));
+
+      if (
+        /mehrfamilienhaus|mietobjekt|vermieter|bestandshalter|wohnungsunternehmen|objektportfolio/iu.test(
+          scenarioSeed.avatarProfessionOrContext
+        )
+      ) {
+        avatar.avatarJobSituation = "entrepreneur";
+      } else if (
+        /ehepaar|eigenheimbesitzer|eigenheimbesitzerin|hausbesitzer|hausbesitzerin/iu.test(
+          scenarioSeed.avatarProfessionOrContext
+        )
+      ) {
+        avatar.avatarJobSituation = avatar.avatarAge >= 67 ? "retired" : "employed_full_time";
+      }
+
+      avatar.avatarObjections = getEnergyObjectionsByDisc(avatar.avatarDiscType);
+    }
 
     avatar.openingMessage = buildOpeningMessage(avatar);
     return { avatar, comparison: selection.comparison };
@@ -240,7 +303,7 @@ ${formatAvatarSummaryLines(currentAvatar)}
 - Finanzieller Spielraum: ${formatFinancialBudget(currentAvatar.avatarFinancialBudget)}
 - Disc-Typ: ${formatDiscType(currentAvatar.avatarDiscType)} (${getDiscPromptGuidance(
       currentAvatar.avatarDiscType
-    )})
+    )}) / DISG-Farbe: ${getDiscColorLabel(currentAvatar.avatarDiscType)}
 - Difficulty: ${currentAvatar.avatarDifficulty} (${getDifficultyPromptGuidance(
       currentAvatar.avatarDifficulty
     )})
@@ -257,6 +320,14 @@ Der Disc-Typ und die Einwände müssen sich spürbar im Verhalten zeigen.`,
 - medium: spürbar mehr Unsicherheit/Zögern/Skepsis, Regieanweisungen regelmäßiger, mindestens eine vertiefende Rückfrage.
 - hard: deutlich skeptischer und emotionaler, vergleicht Alternativen, challenged schwache Claims (Preis, Vertrauen, Differenzierung, Dringlichkeit), Regieanweisungen häufig aber kurz.
 - Pro Kundenantwort maximal eine kursiv gesetzte Regieanweisung und nur wenn sie natürlich passt.`);
+
+  if (context.industryKey === "energy") {
+    blocks.push(`ENERGY-SPEZIFISCHE VERHALTENSREGELN:
+- Zielbild des Kunden ist immer Eigentumskontext (Eigenheim oder Mehrfamilienhaus / Mietobjekte).
+- Argumentiere je nach DISG-Typ klar unterschiedlich.
+- ${getEnergyCreditOpennessHint(currentAvatar)}
+- Interessen koennen kombiniert auftreten: Strom sparen, guenstiger heizen, Umweltaspekte, Wertsteigerung, Foerdermittel.`);
+  }
 
   if (context.previousAvatar) {
     const difference = calculateSimulationAvatarDifference(
