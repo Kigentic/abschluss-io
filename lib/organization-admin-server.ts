@@ -22,6 +22,16 @@ type MembershipRecord = {
   } | null;
 };
 
+type OrganizationFallbackRecord = {
+  id: string;
+  industry_key: string | null;
+  industry_locked: boolean | null;
+  is_active: boolean;
+  organization_name: string;
+  prompt_profile_key: string | null;
+  seat_limit: number;
+};
+
 type ProfileRecord = {
   is_active: boolean;
   role: string | null;
@@ -166,6 +176,39 @@ export async function requireOrganizationAdmin(
       error: membershipError.message,
       status: 500,
     };
+  }
+
+  if (isMasterAdmin && !membership?.organizations) {
+    const { data: fallbackOrganization, error: fallbackOrganizationError } =
+      await serviceRoleClient
+        .from("organizations")
+        .select(
+          "id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked"
+        )
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle<OrganizationFallbackRecord>();
+
+    if (fallbackOrganizationError) {
+      return {
+        error: fallbackOrganizationError.message,
+        status: 500,
+      };
+    }
+
+    if (fallbackOrganization) {
+      return {
+        membership: {
+          organization_id: fallbackOrganization.id,
+          role_in_org: "admin",
+          organizations: fallbackOrganization,
+        },
+        serviceRoleClient,
+        supabase,
+        userId: user.id,
+      };
+    }
   }
 
   if (!membership?.organizations) {
