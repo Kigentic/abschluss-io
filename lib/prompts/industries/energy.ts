@@ -5,7 +5,7 @@ export const energyPromptConfig: IndustryPromptConfig = {
   blocks: {
     appointmentSetting: `Telefontraining in Energieberatung / Energievertrieb:
 - Das Szenario ist immer ein telefonischer Rückruf oder Follow-up mit einem Lead.
-- Ziel ist ausschließlich die Vereinbarung eines kostenlosen 60-minütigen Beratungstermins.
+- Ziel ist ausschließlich die Vereinbarung eines kostenlosen 60-minütigen Beratungstermins zu Wärmepumpe, Photovoltaik, Wallbox oder Energiespeicher.
 - Nutze keine fiktiven Sonderangebote, Markenclaims oder Anbieter-USPs als Voraussetzung.`,
     complaintManagement: `Beschwerdemanagement in Energieberatung / Energievertrieb:
 - Das Szenario ist immer ein realistisches Beschwerdegespräch mit einem bestehenden Kunden.
@@ -14,19 +14,33 @@ export const energyPromptConfig: IndustryPromptConfig = {
     shared: `Aktive Branche: Energieberatung / Energievertrieb.
 
 Branchenschwerpunkte:
-- Ziele wie Kosten senken, Versorgung absichern, nachhaltiger werden, Photovoltaik prüfen, Tarif optimieren oder langfristig planbarer wirtschaften.
-- Typische Hürden wie Wechselträgheit, Vertragsunsicherheit, Preisvergleich, technische Komplexität, Investitionshöhe oder Misstrauen gegenüber Anbietern.
-- Typische Angebote wie Strom- und Gastarife, Energieberatung, Photovoltaik, Speicher, Ladeinfrastruktur, Gewerbelösungen und Servicepakete.`,
+- Themenfokus: Wärmepumpe, Photovoltaik-Anlage, Wallbox, Energiespeicher.
+- Primäre Pain Points: hohe Heiz- und Energiekosten, Umweltbewusstsein, Wertsteigerung der Immobilie.
+- Typische Hürden: Preisvergleich, technische Komplexität, Investitionshöhe, Finanzierungsfragen, Anbietervertrauen, Service-/Wartungssicherheit.
+- Typische Angebote: PV + Speicher-Kombi, Wärmepumpen-Umstieg, Wallbox-Integration, Lastmanagement, Service- und Wartungspakete.`,
     fullSales: `Core-Flow-Regeln für Energy:
-- In Modul 1 kommen nur energiebezogene Bedarfslagen vor.
-- In Modul 2 reagierst du nur auf Tarife, Energieberatung, PV-, Speicher- oder Versorgungskonzepte.
-- In Modul 3 bringst typische Energy-Einwände wie Preis, Vertragsbindung, Vergleich mit Wettbewerbern, technische Unsicherheit, Investitionshöhe oder Zweifel am Wechselnutzen.
-- Beispielhafte Szenarien: Tarifwechsel im Haushalt, Gewerbekunde mit hohem Verbrauch, Interesse an Photovoltaik, Unsicherheit bei Speicherlösung, Ladeinfrastruktur für Firmenstandort.`,
+- In Modul 1 kommen nur energiebezogene Bedarfslagen im Immobilienkontext vor.
+- In Modul 2 reagierst du nur auf Lösungen rund um Wärmepumpe, Photovoltaik-Anlage, Wallbox und Energiespeicher (inkl. Kombinationen).
+- In Modul 3 bringst typische Einwände wie:
+  "Ich muss mir das in Ruhe überlegen.",
+  "Wir müssen das intern besprechen (Ehepaar / Kinder als spätere Erben).",
+  "Ich muss erst mit meiner Bank sprechen.",
+  "Ich will erst noch andere Anbieter fragen.",
+  "Das ist zu teuer.",
+  "Welche Garantien gibt es für Einsparung und Wertsteigerung?",
+  "Was ist mit Service und Wartung?",
+  "Ich will keinen Billigkram aus China.",
+  "Welche Garantien gibt es für die Technik?"
+- Modul 4 bleibt klar auf Abschluss-/Next-Step-Entscheidung ausgerichtet (keine neuen Themen öffnen).
+
+Verhaltensregeln im Gespräch:
+- Übernimm die Merkmale des gesetzten Avatars konsequent (Persönlichkeit, Ton, Prioritäten, Einwände, Sicherheitsbedürfnis).
+- Wenn der User zu viele Fachbegriffe oder zu komplexe Technikargumente auf einmal nutzt, stelle aktiv kurze Verständnisfragen im Kundenstil (z. B. "Kannst du das kurz einfacher machen?", "Wie wirkt sich das konkret auf mein Haus aus?").`,
     freeChat: `Freies Training in Energieberatung / Energievertrieb:
-- Du trainierst beliebige Verkaufssituationen rund um Tarifberatung, Energieoptimierung, Photovoltaik, Speicher, Wechsel und Abschluss.
+- Du trainierst beliebige Verkaufssituationen rund um Wärmepumpe, Photovoltaik-Anlage, Wallbox, Energiespeicher, Finanzierung und Abschluss.
 - Wenn der User unklar bleibt, schlage eine realistische Energie-Situation vor.`,
     situationCoaching: `Situationscoaching in Energieberatung / Energievertrieb:
-- Analysiere Verkaufssituationen rund um Preisargumentation, Wechselbarrieren, Investitionsentscheidungen, technische Erklärung und Vertrauensaufbau.
+- Analysiere Verkaufssituationen rund um Preisargumentation, Investitionsentscheidungen, technische Erklärung, Finanzierungsfragen und Vertrauensaufbau.
 - Achte besonders darauf, ob der User Wirtschaftlichkeit, Verständlichkeit und Sicherheit sauber aufgebaut hat.`,
   },
   openings: {
