@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
 import { SiteBrand } from "@/components/site-brand";
-import { getPasswordResetRedirectUrl } from "@/lib/site-url";
 import { getSupabaseBrowserClient, hasSupabaseEnv } from "@/lib/supabase";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -48,7 +47,10 @@ export default function ForgotPasswordPage() {
     try {
       setIsLoading(true);
       const supabase = getSupabaseBrowserClient();
-      const redirectTo = getPasswordResetRedirectUrl();
+      const redirectTo =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/reset-password`
+          : "https://abschluss-io.de/reset-password";
 
       if (!supabase) {
         throw new Error(
