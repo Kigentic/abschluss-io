@@ -276,6 +276,9 @@ function getUsageDurationLabel(organization: AdminOrganization) {
 export function AdminPageView() {
   const router = useRouter();
   const [organizations, setOrganizations] = useState<AdminOrganization[]>([]);
+  const [industrySelections, setIndustrySelections] = useState<
+    Record<string, IndustryKey>
+  >({});
   const [cleanupConfirmValue, setCleanupConfirmValue] = useState("");
   const [cleanupError, setCleanupError] = useState("");
   const [cleanupPreview, setCleanupPreview] = useState<CleanupResponse | null>(null);
@@ -368,6 +371,15 @@ export function AdminPageView() {
         if (isActive) {
           setCurrentUserId(sessionUserId);
           setOrganizations(responseBody.organizations);
+          setIndustrySelections(
+            responseBody.organizations.reduce<Record<string, IndustryKey>>(
+              (accumulator, organization) => {
+                accumulator[organization.id] = organization.industryKey;
+                return accumulator;
+              },
+              {}
+            )
+          );
           setSystemEvents(responseBody.systemEvents ?? []);
           setError("");
           setFeedback("");
@@ -897,6 +909,10 @@ export function AdminPageView() {
             : organization
         )
       );
+      setIndustrySelections((currentSelections) => ({
+        ...currentSelections,
+        [organizationId]: responseBody.industryKey ?? industryKey,
+      }));
       setFeedback("Branche erfolgreich aktualisiert.");
     } catch (err) {
       setError(
@@ -1471,18 +1487,27 @@ export function AdminPageView() {
                               >
                                 Branche
                               </label>
+                              {(() => {
+                                const selectedIndustry =
+                                  industrySelections[organization.id] ??
+                                  organization.industryKey;
+                                const isIndustryUpdating =
+                                  updatingKey === `industry:${organization.id}`;
+                                const hasIndustryChanged =
+                                  selectedIndustry !== organization.industryKey;
+
+                                return (
+                                  <>
                               <select
                                 id={`industry-${organization.id}`}
-                                value={organization.industryKey}
+                                value={selectedIndustry}
                                 onChange={(event) =>
-                                  void handleIndustryUpdate(
-                                    organization.id,
-                                    event.target.value as IndustryKey
-                                  )
+                                  setIndustrySelections((currentSelections) => ({
+                                    ...currentSelections,
+                                    [organization.id]: event.target.value as IndustryKey,
+                                  }))
                                 }
-                                disabled={
-                                  updatingKey === `industry:${organization.id}`
-                                }
+                                disabled={isIndustryUpdating}
                                 className="min-h-12 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-[#707070] shadow-[0_10px_24px_rgba(15,23,42,0.04)] outline-none transition focus:border-[#0e51a0] focus:ring-4 focus:ring-[#0e51a0]/10 disabled:cursor-not-allowed disabled:opacity-60"
                               >
                                 {INDUSTRY_OPTIONS.map((option) => (
@@ -1491,6 +1516,22 @@ export function AdminPageView() {
                                   </option>
                                 ))}
                               </select>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  void handleIndustryUpdate(
+                                    organization.id,
+                                    selectedIndustry
+                                  )
+                                }
+                                disabled={!hasIndustryChanged || isIndustryUpdating}
+                                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#0e51a0] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0c4388] disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {isIndustryUpdating ? "Speichere..." : "Ändern"}
+                              </button>
+                                  </>
+                                );
+                              })()}
                               <p className="text-xs text-slate-500">
                                 Aktuelle Branche: {organization.industryKey}
                               </p>
