@@ -84,20 +84,27 @@ function toBriefingValue(value: string | number | null | undefined) {
 function formatFullSalesBriefing(params: {
   avatarAge: number | null | undefined;
   avatarDifficulty: string | null | undefined;
+  industryKey: string | null | undefined;
   avatarName: string | null | undefined;
   avatarPrimaryProblem: string | null | undefined;
   avatarProfessionOrContext: string | null | undefined;
 }) {
+  const normalizedIndustryKey = normalizeIndustryKey(params.industryKey);
+  const primaryProblemLabel =
+    normalizedIndustryKey === "energy"
+      ? "Konkretes Interesse"
+      : "Beschwerdebild";
+
   return [
     "Kunden-Briefing",
     "",
     `Name: ${toBriefingValue(params.avatarName)}`,
     `Alter: ${toBriefingValue(params.avatarAge)}`,
     `Beruf: ${toBriefingValue(params.avatarProfessionOrContext)}`,
-    `Beschwerdebild: ${toBriefingValue(params.avatarPrimaryProblem)}`,
+    `${primaryProblemLabel}: ${toBriefingValue(params.avatarPrimaryProblem)}`,
     `Schwierigkeitslevel: ${toBriefingValue(params.avatarDifficulty)}`,
     "",
-    "Starte jetzt das Beratungsgespraech. Du eroeffnest das Gespraech mit deiner ersten Nachricht.",
+    "Starte jetzt das Beratungsgespräch. Du eröffnest das Gespräch mit deiner ersten Nachricht.",
   ].join("\n");
 }
 
@@ -234,6 +241,7 @@ export function ChatSessionView({ sessionId }: ChatSessionViewProps) {
             welcomeMessage = formatFullSalesBriefing({
               avatarAge: avatarSnapshot?.avatar_age,
               avatarDifficulty: avatarSnapshot?.avatar_difficulty,
+              industryKey: session.organizations?.industry_key,
               avatarName: avatarSnapshot?.avatar_name,
               avatarPrimaryProblem: avatarSnapshot?.avatar_primary_problem,
               avatarProfessionOrContext: avatarSnapshot?.avatar_profession_or_context,
