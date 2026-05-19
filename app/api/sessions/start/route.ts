@@ -268,6 +268,7 @@ function toBriefingValue(value: string | number | null | undefined) {
 function formatFullSalesBriefing(params: {
   avatarAge: number | null | undefined;
   avatarDifficulty: string | null | undefined;
+  industryKey: string | null | undefined;
   avatarName: string | null | undefined;
   avatarPrimaryProblem: string | null | undefined;
   avatarProfessionOrContext: string | null | undefined;
@@ -275,10 +276,13 @@ function formatFullSalesBriefing(params: {
   const {
     avatarAge,
     avatarDifficulty,
+    industryKey,
     avatarName,
     avatarPrimaryProblem,
     avatarProfessionOrContext,
   } = params;
+  const primaryProblemLabel =
+    industryKey === "energy" ? "Konkretes Interesse" : "Beschwerdebild";
 
   return [
     "Kunden-Briefing",
@@ -286,10 +290,10 @@ function formatFullSalesBriefing(params: {
     `Name: ${toBriefingValue(avatarName)}`,
     `Alter: ${toBriefingValue(avatarAge)}`,
     `Beruf: ${toBriefingValue(avatarProfessionOrContext)}`,
-    `Beschwerdebild: ${toBriefingValue(avatarPrimaryProblem)}`,
+    `${primaryProblemLabel}: ${toBriefingValue(avatarPrimaryProblem)}`,
     `Schwierigkeitslevel: ${toBriefingValue(avatarDifficulty)}`,
     "",
-    "Starte jetzt das Beratungsgespraech. Du eroeffnest das Gespraech mit deiner ersten Nachricht.",
+    "Starte jetzt das Beratungsgespräch. Du eröffnest das Gespräch mit deiner ersten Nachricht.",
   ].join("\n");
 }
 
@@ -604,6 +608,7 @@ export async function POST(request: Request) {
       const briefingMessage = formatFullSalesBriefing({
         avatarAge: selection.avatar.avatarAge,
         avatarDifficulty: selection.avatar.avatarDifficulty,
+        industryKey: industrySettings.industryKey,
         avatarName: selection.avatar.avatarName,
         avatarPrimaryProblem: selection.avatar.avatarPrimaryProblem,
         avatarProfessionOrContext: selection.avatar.avatarProfessionOrContext,
