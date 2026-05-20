@@ -67,6 +67,28 @@ function normalizeAppointmentSettingBlockForIndustry(
     );
 }
 
+function normalizeComplaintManagementBlockForIndustry(
+  block: string,
+  industryKey: IndustryKey
+) {
+  if (industryKey === "fitness") {
+    return block;
+  }
+
+  const contextLabel = getIndustryAppointmentContextLabel(industryKey);
+
+  return block
+    .replace(
+      /Beschwerdemanagement in Studio-\/Lead-Setting:/giu,
+      `Beschwerdemanagement in ${contextLabel}:`
+    )
+    .replace(
+      /Dieses Modul bleibt bewusst ein Fitness-\/Boutique-Studio-Beschwerdegespräch\./giu,
+      "Dieses Modul bleibt bewusst ein branchenspezifisches Beschwerdegespräch."
+    )
+    .replace(/im Studioalltag/giu, "im jeweiligen Branchenalltag");
+}
+
 export function getSystemPrompt({
   appointmentAvatarContext,
   complaintAvatarContext,
@@ -96,7 +118,10 @@ export function getSystemPrompt({
     case "complaint_management":
       promptParts.push(
         BASE_COMPLAINT_MANAGEMENT_PROMPT,
-        industryConfig.blocks.complaintManagement
+        normalizeComplaintManagementBlockForIndustry(
+          industryConfig.blocks.complaintManagement,
+          industryKey
+        )
       );
       if (complaintAvatarContext) {
         promptParts.push(buildComplaintAvatarPrompt(complaintAvatarContext));

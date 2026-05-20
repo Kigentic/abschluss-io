@@ -13,8 +13,7 @@ export type AppointmentLeadSource =
 
 export type ComplaintChannelOption =
   | "vor Ort"
-  | "Telefon"
-  | "Empfang / Theke";
+  | "Telefon";
 
 export const APPOINTMENT_LEAD_SOURCE_OPTIONS = [
   "Webseite",
@@ -26,7 +25,6 @@ export const APPOINTMENT_LEAD_SOURCE_OPTIONS = [
 export const COMPLAINT_CHANNEL_OPTIONS = [
   "vor Ort",
   "Telefon",
-  "Empfang / Theke",
 ] as const satisfies readonly ComplaintChannelOption[];
 
 export function resolveAutomaticDifficulty(): SessionDifficulty {

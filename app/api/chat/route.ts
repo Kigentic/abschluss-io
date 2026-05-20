@@ -290,9 +290,14 @@ function mapAvatarSnapshotRowToDomain(
 function mapComplaintAvatarSnapshotRowToDomain(
   snapshot: ComplaintAvatarSnapshotRow
 ): ComplaintAvatarSnapshot {
+  const normalizedChannel =
+    snapshot.avatar_channel === "Empfang / Theke"
+      ? "vor Ort"
+      : snapshot.avatar_channel;
+
   return {
     avatarAge: snapshot.avatar_age,
-    avatarChannel: snapshot.avatar_channel,
+    avatarChannel: normalizedChannel,
     avatarComplaintContext: snapshot.avatar_complaint_context,
     avatarComplaintGoal: snapshot.avatar_complaint_goal,
     avatarComplaintHistory: snapshot.avatar_complaint_history,
