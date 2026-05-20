@@ -70,7 +70,7 @@ type ComplaintAvatarSelection = {
   comparison: SimulationAvatarDifference | null;
 };
 
-const COMPLAINT_SEEDS: readonly ComplaintSeed[] = [
+const DEFAULT_COMPLAINT_SEEDS: readonly ComplaintSeed[] = [
   {
     avatarComplaintContext:
       "der Monatsbeitrag wurde doppelt abgebucht und seitdem kam keine klare Rückmeldung",
@@ -141,6 +141,81 @@ const COMPLAINT_SEEDS: readonly ComplaintSeed[] = [
   },
 ];
 
+type EnergyComplaintSeedInput = {
+  avatarComplaintContext: string;
+  avatarComplaintTopic: string;
+  avatarComplaintType: string;
+};
+
+const ENERGY_COMPLAINT_SEED_INPUTS: readonly EnergyComplaintSeedInput[] = [
+  { avatarComplaintTopic: "Stromrechnung trotz PV deutlich höher als erwartet", avatarComplaintContext: "die Stromrechnung liegt trotz PV-Anlage deutlich über den prognostizierten Werten", avatarComplaintType: "Wirtschaftlichkeitsenttäuschung" },
+  { avatarComplaintTopic: "Wärmepumpe verbraucht im Winter extrem viel Strom", avatarComplaintContext: "die Wärmepumpe zieht im Winter deutlich mehr Strom als in der Beratung dargestellt", avatarComplaintType: "Betriebskosten-Schock" },
+  { avatarComplaintTopic: "Speicher lädt oder entlädt nicht richtig", avatarComplaintContext: "der Speicher lädt und entlädt nicht zuverlässig und die Eigenverbrauchsquote bricht ein", avatarComplaintType: "Systemfunktion gestört" },
+  { avatarComplaintTopic: "PV-App zeigt falsche oder unverständliche Daten an", avatarComplaintContext: "die App zeigt unklare oder widersprüchliche Werte und niemand erklärt die Daten verständlich", avatarComplaintType: "Transparenzproblem" },
+  { avatarComplaintTopic: "Anlage produziert weniger Strom als versprochen", avatarComplaintContext: "die Anlage liefert seit Monaten spürbar weniger Ertrag als in der Verkaufspräsentation genannt", avatarComplaintType: "Leistungsabweichung" },
+  { avatarComplaintTopic: "Wechselrichter fällt regelmäßig aus", avatarComplaintContext: "der Wechselrichter fällt wiederholt aus und verursacht Ertragsverluste", avatarComplaintType: "Technikausfall" },
+  { avatarComplaintTopic: "Wärmepumpe ist viel zu laut", avatarComplaintContext: "die Wärmepumpe ist im Betrieb deutlich lauter als zugesagt und stört den Alltag", avatarComplaintType: "Komfortverlust" },
+  { avatarComplaintTopic: "Förderungen wurden falsch beantragt oder nicht ausgezahlt", avatarComplaintContext: "bei der Förderung wurden Angaben falsch eingereicht oder Zahlungen bleiben aus", avatarComplaintType: "Förderabwicklung fehlerhaft" },
+  { avatarComplaintTopic: "Kommunikation mit dem Installateur bricht nach Verkauf ab", avatarComplaintContext: "nach dem Abschluss ist der Installateur kaum erreichbar und Rückmeldungen bleiben aus", avatarComplaintType: "Serviceabriss" },
+  { avatarComplaintTopic: "Wallbox lädt das Auto nicht zuverlässig", avatarComplaintContext: "die Wallbox lädt das Fahrzeug unregelmäßig oder bricht den Ladevorgang ab", avatarComplaintType: "Nutzungsstörung" },
+  { avatarComplaintTopic: "Energiespeicher verliert auffällig schnell Kapazität", avatarComplaintContext: "die nutzbare Speicherkapazität sinkt schneller als erwartet", avatarComplaintType: "Alterungs-/Qualitätsproblem" },
+  { avatarComplaintTopic: "Heizung wird im Haus nicht richtig warm", avatarComplaintContext: "trotz laufender Anlage werden zentrale Bereiche des Hauses nicht richtig warm", avatarComplaintType: "Versorgungslücke" },
+  { avatarComplaintTopic: "Räume haben unterschiedliche Temperaturen", avatarComplaintContext: "die Temperaturverteilung im Haus ist seit der Umrüstung stark unausgeglichen", avatarComplaintType: "Regelungsproblem" },
+  { avatarComplaintTopic: "Warmwasser reicht plötzlich nicht mehr aus", avatarComplaintContext: "seit der Umstellung reicht das Warmwasser im Alltag nicht mehr aus", avatarComplaintType: "Komforteinschränkung" },
+  { avatarComplaintTopic: "Schimmel oder Feuchtigkeit nach Umrüstung", avatarComplaintContext: "nach der Umrüstung treten Feuchtigkeit und erste Schimmelstellen auf", avatarComplaintType: "Folgeschadenrisiko" },
+  { avatarComplaintTopic: "Dach wurde bei der PV-Montage beschädigt", avatarComplaintContext: "bei der PV-Montage sind am Dach Schäden entstanden, die nicht sauber geklärt wurden", avatarComplaintType: "Montageschaden" },
+  { avatarComplaintTopic: "Stromausfall trotz installiertem Speicher", avatarComplaintContext: "bei Stromausfall übernimmt der Speicher die Versorgung nicht wie zugesagt", avatarComplaintType: "Ausfallsicherheitsproblem" },
+  { avatarComplaintTopic: "Anlage funktioniert nicht im Notstrombetrieb", avatarComplaintContext: "der Notstrombetrieb funktioniert im Ernstfall nicht zuverlässig", avatarComplaintType: "Resilienzversagen" },
+  { avatarComplaintTopic: "Smart-Home-/App-Steuerung funktioniert nicht stabil", avatarComplaintContext: "die Steuerung per App/Smart Home ist instabil und Befehle greifen unzuverlässig", avatarComplaintType: "Automationsproblem" },
+  { avatarComplaintTopic: "Lange Wartezeiten bei Service oder Reparaturen", avatarComplaintContext: "Service- und Reparaturtermine dauern zu lange und Probleme bleiben offen", avatarComplaintType: "Serviceverzug" },
+  { avatarComplaintTopic: "Keine Transparenz über tatsächliche Einsparungen", avatarComplaintContext: "es gibt keine nachvollziehbare Auswertung zu realen Einsparungen", avatarComplaintType: "Controlling-Lücke" },
+  { avatarComplaintTopic: "Hohe Nachzahlungen durch falsche Planung der Wärmepumpe", avatarComplaintContext: "durch fehlerhafte Planung entstehen hohe Nachzahlungen bei Strom und Betrieb", avatarComplaintType: "Planungsfehler" },
+  { avatarComplaintTopic: "Netzbetreiber-Probleme oder Einspeisung blockiert", avatarComplaintContext: "die Einspeisung ist durch Netzbetreiber-Themen blockiert und niemand steuert aktiv dagegen", avatarComplaintType: "Schnittstellenproblem" },
+  { avatarComplaintTopic: "Fehlermeldungen in der App ohne Erklärung", avatarComplaintContext: "die App meldet regelmäßig Fehlercodes, die niemand verständlich erklärt", avatarComplaintType: "Support-/Dokulücke" },
+  { avatarComplaintTopic: "Anlage wurde falsch dimensioniert (zu klein/zu groß)", avatarComplaintContext: "die Anlage ist nicht passend dimensioniert und verfehlt den tatsächlichen Bedarf", avatarComplaintType: "Auslegungsfehler" },
+  { avatarComplaintTopic: "Hohe Finanzierungskosten trotz versprochener Ersparnis", avatarComplaintContext: "die Finanzierungskosten fressen die versprochenen Einsparungen weitgehend auf", avatarComplaintType: "Wirtschaftlichkeitsbruch" },
+  { avatarComplaintTopic: "Kombination aus PV, Speicher und Wärmepumpe arbeitet nicht sauber zusammen", avatarComplaintContext: "PV, Speicher und Wärmepumpe laufen nicht sauber im Verbund und erzeugen Ineffizienz", avatarComplaintType: "Systemintegration fehlerhaft" },
+  { avatarComplaintTopic: "Handwerker hinterlassen Baustelle oder Schäden", avatarComplaintContext: "nach der Installation bleiben Baustellenmängel oder Schäden offen", avatarComplaintType: "Ausführungsqualität unzureichend" },
+  { avatarComplaintTopic: "Ertragseinbruch durch Verschattung wurde vorher nicht erwähnt", avatarComplaintContext: "spürbare Verschattung senkt den Ertrag deutlich, obwohl das im Vorfeld nicht transparent war", avatarComplaintType: "Beratungs-/Planungslücke" },
+  { avatarComplaintTopic: "Gewerbebetrieb hat Lastspitzen trotz Energiesystem nicht im Griff", avatarComplaintContext: "im Gewerbebetrieb bleiben Lastspitzen trotz Systeminvestition hoch", avatarComplaintType: "Lastmanagementversagen" },
+  { avatarComplaintTopic: "Produktionsausfälle durch Stromprobleme", avatarComplaintContext: "Stromprobleme führen im Betrieb zu Produktionsunterbrechungen", avatarComplaintType: "Betriebsunterbrechung" },
+  { avatarComplaintTopic: "Lastmanagement der Wallboxen funktioniert nicht", avatarComplaintContext: "das Lastmanagement der Wallboxen verteilt Leistung nicht stabil", avatarComplaintType: "Ladeinfrastrukturproblem" },
+  { avatarComplaintTopic: "Zu geringe Leistung für Maschinen/Fuhrpark", avatarComplaintContext: "die verfügbare Leistung reicht für Maschinen oder Fuhrpark nicht aus", avatarComplaintType: "Leistungsunterdimensionierung" },
+  { avatarComplaintTopic: "Peak-Shaving funktioniert nicht wie verkauft", avatarComplaintContext: "Peak-Shaving liefert nicht die dargestellten Effekte auf Lastspitzen", avatarComplaintType: "Leistungsversprechen verfehlt" },
+  { avatarComplaintTopic: "Energiekosten sinken kaum trotz hoher Investition", avatarComplaintContext: "die Energiekosten sinken trotz hoher Investition nur minimal", avatarComplaintType: "ROI-Enttäuschung" },
+  { avatarComplaintTopic: "Fehlende Fernwartung oder Monitoring", avatarComplaintContext: "Fernwartung und Monitoring sind nicht zuverlässig verfügbar", avatarComplaintType: "Betriebsführungsdefizit" },
+  { avatarComplaintTopic: "Brandschutz-/Versicherungsprobleme nach Installation", avatarComplaintContext: "nach Installation gibt es offene Brandschutz- oder Versicherungsauflagen", avatarComplaintType: "Compliance-Risiko" },
+  { avatarComplaintTopic: "Zu lange Amortisationszeit im Vergleich zur Verkaufspräsentation", avatarComplaintContext: "die realistische Amortisationszeit liegt deutlich über der Verkaufsaussage", avatarComplaintType: "Kalkulationsabweichung" },
+  { avatarComplaintTopic: "Speicher überhitzt im Technikraum", avatarComplaintContext: "der Speicher zeigt kritische Temperaturen im Technikraum", avatarComplaintType: "Betriebssicherheitsrisiko" },
+  { avatarComplaintTopic: "Komplizierte Bedienung für Mitarbeiter oder Hausverwaltung", avatarComplaintContext: "die Bedienung ist für Mitarbeiter oder Hausverwaltung zu komplex und fehleranfällig", avatarComplaintType: "Usability-/Schulungsproblem" },
+];
+
+const ENERGY_COMPLAINT_SEEDS: readonly ComplaintSeed[] = ENERGY_COMPLAINT_SEED_INPUTS.map(
+  (seed) => ({
+    ...seed,
+    avatarComplaintGoal:
+      "eine verbindliche, terminsichere Lösung mit klarer Verantwortung und transparenter Nachverfolgung",
+    avatarComplaintHistory:
+      "hat bereits mehrfach nachgehakt, aber nur Teilantworten oder wechselnde Zuständigkeiten erhalten",
+    avatarInnerAmplifiers: [
+      "fühlt sich nach der Investition mit dem Problem allein gelassen",
+      "zweifelt an den ursprünglichen Leistungs- und Einsparzusagen",
+    ],
+    avatarLifeContext:
+      "steht unter hohem Entscheidungsdruck zwischen Kosten, Betriebssicherheit und Alltagstauglichkeit",
+    avatarMembershipContext:
+      "ist Bestandskunde und erwartet professionellen Service über den Verkauf hinaus",
+  })
+);
+
+function getComplaintSeedsForIndustry(industryKey: IndustryKey) {
+  if (industryKey === "energy") {
+    return ENERGY_COMPLAINT_SEEDS;
+  }
+
+  return DEFAULT_COMPLAINT_SEEDS;
+}
+
 function getRandomItem<T>(items: readonly T[]) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -185,9 +260,10 @@ function buildOpeningMessage(avatar: ComplaintAvatarCandidate) {
 export function selectComplaintAvatar(params: {
   channel: ComplaintChannelOption;
   difficulty: SessionDifficulty;
+  industryKey: IndustryKey;
   previousAvatar?: ComplaintAvatarSnapshot | null;
 }) {
-  const seed = getRandomItem(COMPLAINT_SEEDS);
+  const seed = getRandomItem(getComplaintSeedsForIndustry(params.industryKey));
   const selection = selectDiverseSimulationAvatarProfile({
     module: "complaint_management",
     previousAvatar: params.previousAvatar ?? null,

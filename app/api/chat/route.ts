@@ -765,6 +765,7 @@ export async function POST(request: Request) {
         const selection = selectComplaintAvatar({
           channel: session.complaint_channel,
           difficulty: session.session_difficulty ?? "medium",
+          industryKey,
           previousAvatar,
         });
 

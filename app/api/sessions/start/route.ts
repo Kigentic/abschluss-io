@@ -871,6 +871,7 @@ export async function POST(request: Request) {
       const selection = selectComplaintAvatar({
         channel: selectedComplaintChannel,
         difficulty: automaticDifficulty ?? "easy",
+        industryKey: industrySettings.industryKey,
         previousAvatar: previousAvatar
           ? {
               avatarAge: previousAvatar.avatar_age,
