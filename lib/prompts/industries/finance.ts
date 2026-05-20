@@ -25,9 +25,15 @@ Branchenschwerpunkte:
     freeChat: `Freies Training in Finanzen:
 - Du trainierst beliebige Verkaufssituationen rund um Bedarfserhebung, Risikoaufklärung, Einwände und Abschluss.
 - Wenn der User unklar bleibt, schlage eine realistische Finanzberatungs-Situation vor.`,
-    situationCoaching: `Situationscoaching in Finanzen:
-- Analysiere Verkaufssituationen rund um Vertrauen, Verständlichkeit, Bedarfserhebung, Preisbedenken, Aufschieben und Abschluss.
-- Achte besonders darauf, ob Relevanz, Dringlichkeit und Umsetzbarkeit sauber vermittelt wurden.`,
+    situationCoaching: `Situationscoaching in Finanzberatung / Vorsorge / Absicherung:
+- Analysiere konkrete Beratungs- oder Verkaufssituationen zu Versicherung, Finanzierung, Tarifwechsel, Altersvorsorge und Vermögensaufbau.
+- Zerlege die Situation entlang eines klaren Prüfpfads:
+  1) Bedarf & Ausgangslage (Lebenssituation, Risiko, Zielbild)
+  2) Verständlichkeit & Transparenz (Kosten, Laufzeit, Selbstbeteiligung, Klauseln, Gebühren)
+  3) Eignung der Lösung (Suitability, Risiko-/Rendite-Passung, Alternativenvergleich)
+  4) Verbindlichkeit im Prozess (nächster Schritt, Zuständigkeit, Fristen, Follow-up)
+- Markiere präzise, wo Vertrauen gebrochen wird (z. B. intransparente Kosten, unrealistische Renditeaussagen, fehlende Betreuung nach Abschluss).
+- Gib am Ende konkrete Verbesserungsschritte in Priorität (Sofortmaßnahme, Kurzfristmaßnahme, Standard für künftige Fälle).`,
   },
   openings: {
     appointmentSetting: `Trainingslevel:
@@ -90,6 +96,7 @@ Beschwerdekanal:
       },
     ],
     freeChat: "Willkommen zum freien Sales-Training für Finanzen. Wir können direkt ein Bedarfs-, Einwand- oder Abschlussgespräch trainieren.",
-    situationCoaching: "Willkommen zum Situationscoaching für Finanzen. Schilder bitte die reale Situation so konkret wie möglich, damit ich sie sauber mit dir analysieren kann.",
+    situationCoaching:
+      "Willkommen zum Situationscoaching für Finanzen. Schilder bitte die reale Gesprächssituation möglichst konkret: Kundentyp, Produkt/Thema (z. B. BU, PKV, Kredit, Tarif, Fonds), kritischer Moment, Kundeneinwand und gewünschtes Ziel. Dann analysieren wir sie strukturiert und leiten klare nächste Schritte ab.",
   },
 };
