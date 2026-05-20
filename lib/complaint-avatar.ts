@@ -1,4 +1,4 @@
-import type { IndustryKey } from "@/lib/industries";
+import type { FranchiseVerticalKey, IndustryKey } from "@/lib/industries";
 import type { ComplaintChannelOption } from "@/lib/training-session-config";
 import {
   calculateSimulationAvatarDifference,
@@ -576,6 +576,76 @@ function getComplaintSeedsForIndustry(industryKey: IndustryKey) {
   return DEFAULT_COMPLAINT_SEEDS;
 }
 
+function getFranchiseComplaintSeeds(
+  vertical: FranchiseVerticalKey
+): readonly ComplaintSeed[] {
+  if (vertical === "restaurant") {
+    return [
+      {
+        avatarComplaintContext:
+          "die Warenkosten und Personalauslastung liegen deutlich über der Business-Plan-Annahme",
+        avatarComplaintGoal:
+          "eine belastbare operative Nachsteuerung mit klaren Maßnahmen und Fristen",
+        avatarComplaintHistory:
+          "hat schon mehrfach auf Abweichungen hingewiesen, aber nur allgemeine Antworten erhalten",
+        avatarComplaintTopic: "Marge kippt im Restaurantbetrieb",
+        avatarComplaintType: "Operative Wirtschaftlichkeitsabweichung",
+        avatarInnerAmplifiers: [
+          "hoher Druck auf Liquidität und Teamplanung",
+          "zweifelt an der Tragfähigkeit der Standortannahmen",
+        ],
+        avatarLifeContext: "führt einen anspruchsvollen Schichtbetrieb mit hoher Personalvolatilität",
+        avatarMembershipContext:
+          "ist Franchisepartner und erwartet operatives Coaching statt Standardfloskeln",
+      },
+    ];
+  }
+  if (vertical === "fashion") {
+    return [
+      {
+        avatarComplaintContext:
+          "Sortiment und Saisonsteuerung funktionieren nicht wie in der Präsentation dargestellt",
+        avatarComplaintGoal:
+          "klare Steuerungslogik für Warenrotation, Abschriften und Flächenproduktivität",
+        avatarComplaintHistory:
+          "hat bereits Kennzahlen geteilt, aber keine konkrete Handlungsempfehlung erhalten",
+        avatarComplaintTopic: "Warenrotation/Abschriften außer Kontrolle",
+        avatarComplaintType: "Sortiments- und Steuerungsproblem",
+        avatarInnerAmplifiers: [
+          "hohe Kapitalbindung in langsam drehender Ware",
+          "sinkendes Vertrauen in die Zentrale",
+        ],
+        avatarLifeContext: "muss täglich zwischen Verkauf, Teamführung und Warensteuerung balancieren",
+        avatarMembershipContext:
+          "ist Franchisenehmer und fordert umsetzbare, standortrelevante Steuerungsmaßnahmen",
+      },
+    ];
+  }
+  if (vertical === "fitness") {
+    return [
+      {
+        avatarComplaintContext:
+          "Mitgliederentwicklung bleibt klar hinter den Standortzielen zurück, trotz lokaler Maßnahmen",
+        avatarComplaintGoal:
+          "eine konkrete Pipeline- und Bindungsstrategie mit messbaren Zwischenzielen",
+        avatarComplaintHistory:
+          "hat wiederholt um Unterstützung gebeten, aber nur generische Marketinghinweise bekommen",
+        avatarComplaintTopic: "Mitgliederaufbau/Bindung unter Plan",
+        avatarComplaintType: "Wachstums- und Retentionsproblem",
+        avatarInnerAmplifiers: [
+          "Fixkosten laufen stabil, Umsatzentwicklung nicht",
+          "hohe Belastung durch Fluktuation im Team",
+        ],
+        avatarLifeContext: "arbeitet operativ nah am Tagesgeschäft mit wenig Puffer",
+        avatarMembershipContext:
+          "ist Franchisepartner mit Fokus auf stabile Auslastung und planbares Wachstum",
+      },
+    ];
+  }
+
+  return [];
+}
+
 function getRandomItem<T>(items: readonly T[]) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -620,10 +690,18 @@ function buildOpeningMessage(avatar: ComplaintAvatarCandidate) {
 export function selectComplaintAvatar(params: {
   channel: ComplaintChannelOption;
   difficulty: SessionDifficulty;
+  franchiseVertical?: FranchiseVerticalKey;
   industryKey: IndustryKey;
   previousAvatar?: ComplaintAvatarSnapshot | null;
 }) {
-  const seed = getRandomItem(getComplaintSeedsForIndustry(params.industryKey));
+  const baseSeeds = getComplaintSeedsForIndustry(params.industryKey);
+  const verticalSeeds =
+    params.industryKey === "franchise"
+      ? getFranchiseComplaintSeeds(params.franchiseVertical ?? "other")
+      : [];
+  const seed = getRandomItem(
+    verticalSeeds.length > 0 ? verticalSeeds : baseSeeds
+  );
   const selection = selectDiverseSimulationAvatarProfile({
     module: "complaint_management",
     previousAvatar: params.previousAvatar ?? null,

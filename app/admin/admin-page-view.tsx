@@ -6,7 +6,12 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 
 import { InternalAppShell } from "@/components/internal-app-shell";
-import { INDUSTRY_OPTIONS, type IndustryKey } from "@/lib/industries";
+import {
+  FRANCHISE_VERTICAL_OPTIONS,
+  type FranchiseVerticalKey,
+  INDUSTRY_OPTIONS,
+  type IndustryKey,
+} from "@/lib/industries";
 import { getSupabaseBrowserClient, hasSupabaseEnv } from "@/lib/supabase";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -53,6 +58,7 @@ type AdminOrganization = {
     subscriptionStatus: string;
   } | null;
   createdAt: string;
+  franchiseVertical: FranchiseVerticalKey | null;
   id: string;
   industryKey: IndustryKey;
   industryLocked: boolean;
@@ -94,6 +100,7 @@ type OverviewResponse = {
 
 type ActionResponse = {
   error?: string;
+  franchiseVertical?: FranchiseVerticalKey | null;
   id?: string;
   industryKey?: IndustryKey;
   isActive?: boolean;
@@ -279,6 +286,9 @@ export function AdminPageView() {
   const [industrySelections, setIndustrySelections] = useState<
     Record<string, IndustryKey>
   >({});
+  const [franchiseVerticalSelections, setFranchiseVerticalSelections] = useState<
+    Record<string, FranchiseVerticalKey>
+  >({});
   const [cleanupConfirmValue, setCleanupConfirmValue] = useState("");
   const [cleanupError, setCleanupError] = useState("");
   const [cleanupPreview, setCleanupPreview] = useState<CleanupResponse | null>(null);
@@ -375,6 +385,15 @@ export function AdminPageView() {
             responseBody.organizations.reduce<Record<string, IndustryKey>>(
               (accumulator, organization) => {
                 accumulator[organization.id] = organization.industryKey;
+                return accumulator;
+              },
+              {}
+            )
+          );
+          setFranchiseVerticalSelections(
+            responseBody.organizations.reduce<Record<string, FranchiseVerticalKey>>(
+              (accumulator, organization) => {
+                accumulator[organization.id] = organization.franchiseVertical ?? "other";
                 return accumulator;
               },
               {}
@@ -844,7 +863,8 @@ export function AdminPageView() {
 
   const handleIndustryUpdate = async (
     organizationId: string,
-    industryKey: IndustryKey
+    industryKey: IndustryKey,
+    franchiseVertical?: FranchiseVerticalKey
   ) => {
     if (!hasSupabaseEnv) {
       setError(
@@ -884,6 +904,10 @@ export function AdminPageView() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          franchiseVertical:
+            industryKey === "franchise"
+              ? franchiseVertical ?? franchiseVerticalSelections[organizationId] ?? "other"
+              : null,
           industryKey,
           promptProfileKey: industryKey,
         }),
@@ -903,6 +927,12 @@ export function AdminPageView() {
             ? {
                 ...organization,
                 industryKey: responseBody.industryKey ?? industryKey,
+                franchiseVertical:
+                  responseBody.industryKey === "franchise"
+                    ? responseBody.franchiseVertical ??
+                      organization.franchiseVertical ??
+                      "other"
+                    : null,
                 promptProfileKey:
                   responseBody.promptProfileKey ?? organization.promptProfileKey,
               }
@@ -913,6 +943,16 @@ export function AdminPageView() {
         ...currentSelections,
         [organizationId]: responseBody.industryKey ?? industryKey,
       }));
+      if ((responseBody.industryKey ?? industryKey) === "franchise") {
+        setFranchiseVerticalSelections((currentSelections) => ({
+          ...currentSelections,
+          [organizationId]:
+            responseBody.franchiseVertical ??
+            franchiseVertical ??
+            currentSelections[organizationId] ??
+            "other",
+        }));
+      }
       setFeedback("Branche erfolgreich aktualisiert.");
     } catch (err) {
       setError(
@@ -1491,50 +1531,90 @@ export function AdminPageView() {
                                 const selectedIndustry =
                                   industrySelections[organization.id] ??
                                   organization.industryKey;
+                                const selectedFranchiseVertical =
+                                  franchiseVerticalSelections[organization.id] ??
+                                  organization.franchiseVertical ??
+                                  "other";
                                 const isIndustryUpdating =
                                   updatingKey === `industry:${organization.id}`;
                                 const hasIndustryChanged =
-                                  selectedIndustry !== organization.industryKey;
+                                  selectedIndustry !== organization.industryKey ||
+                                  (selectedIndustry === "franchise" &&
+                                    selectedFranchiseVertical !==
+                                      (organization.franchiseVertical ?? "other"));
 
                                 return (
                                   <>
-                              <select
-                                id={`industry-${organization.id}`}
-                                value={selectedIndustry}
-                                onChange={(event) =>
-                                  setIndustrySelections((currentSelections) => ({
-                                    ...currentSelections,
-                                    [organization.id]: event.target.value as IndustryKey,
-                                  }))
-                                }
-                                disabled={isIndustryUpdating}
-                                className="min-h-12 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-[#707070] shadow-[0_10px_24px_rgba(15,23,42,0.04)] outline-none transition focus:border-[#0e51a0] focus:ring-4 focus:ring-[#0e51a0]/10 disabled:cursor-not-allowed disabled:opacity-60"
-                              >
-                                {INDUSTRY_OPTIONS.map((option) => (
-                                  <option key={option.value} value={option.value}>
-                                    {option.label}
-                                  </option>
-                                ))}
-                              </select>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  void handleIndustryUpdate(
-                                    organization.id,
-                                    selectedIndustry
-                                  )
-                                }
-                                disabled={!hasIndustryChanged || isIndustryUpdating}
-                                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#0e51a0] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0c4388] disabled:cursor-not-allowed disabled:opacity-60"
-                              >
-                                {isIndustryUpdating ? "Speichere..." : "Ändern"}
-                              </button>
+                                    <select
+                                      id={`industry-${organization.id}`}
+                                      value={selectedIndustry}
+                                      onChange={(event) =>
+                                        setIndustrySelections((currentSelections) => ({
+                                          ...currentSelections,
+                                          [organization.id]: event.target.value as IndustryKey,
+                                        }))
+                                      }
+                                      disabled={isIndustryUpdating}
+                                      className="min-h-12 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-[#707070] shadow-[0_10px_24px_rgba(15,23,42,0.04)] outline-none transition focus:border-[#0e51a0] focus:ring-4 focus:ring-[#0e51a0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                      {INDUSTRY_OPTIONS.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                          {option.label}
+                                        </option>
+                                      ))}
+                                    </select>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        void handleIndustryUpdate(
+                                          organization.id,
+                                          selectedIndustry,
+                                          selectedFranchiseVertical
+                                        )
+                                      }
+                                      disabled={!hasIndustryChanged || isIndustryUpdating}
+                                      className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#0e51a0] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0c4388] disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                      {isIndustryUpdating ? "Speichere..." : "Ändern"}
+                                    </button>
+                                    <p className="text-xs text-slate-500">
+                                      Aktuelle Branche: {organization.industryKey}
+                                    </p>
+                                    {selectedIndustry === "franchise" ? (
+                                      <>
+                                        <label
+                                          htmlFor={`franchise-vertical-${organization.id}`}
+                                          className="mt-2 text-sm font-medium text-[#707070]"
+                                        >
+                                          Franchise-Segment
+                                        </label>
+                                        <select
+                                          id={`franchise-vertical-${organization.id}`}
+                                          value={selectedFranchiseVertical}
+                                          onChange={(event) =>
+                                            setFranchiseVerticalSelections((currentSelections) => ({
+                                              ...currentSelections,
+                                              [organization.id]:
+                                                event.target.value as FranchiseVerticalKey,
+                                            }))
+                                          }
+                                          disabled={isIndustryUpdating}
+                                          className="min-h-12 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-[#707070] shadow-[0_10px_24px_rgba(15,23,42,0.04)] outline-none transition focus:border-[#0e51a0] focus:ring-4 focus:ring-[#0e51a0]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                                        >
+                                          {FRANCHISE_VERTICAL_OPTIONS.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                              {option.label}
+                                            </option>
+                                          ))}
+                                        </select>
+                                        <p className="text-xs text-slate-500">
+                                          Aktuelles Segment: {organization.franchiseVertical ?? "other"}
+                                        </p>
+                                      </>
+                                    ) : null}
                                   </>
                                 );
                               })()}
-                              <p className="text-xs text-slate-500">
-                                Aktuelle Branche: {organization.industryKey}
-                              </p>
                             </div>
                           </div>
 

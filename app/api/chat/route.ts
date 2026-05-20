@@ -398,13 +398,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const { industryKey } = await getOrganizationIndustrySettings(
+    const { franchiseVertical, industryKey } = await getOrganizationIndustrySettings(
       supabase,
       session.organization_id
     );
 
     let fullSalesAvatarContext: {
       currentAvatar: FullSalesAvatarSnapshot;
+      franchiseVertical?: "restaurant" | "fashion" | "fitness" | "beauty" | "retail" | "services" | "other";
       industryKey?: FullSalesAvatarSnapshot["industryKey"];
       previousAvatar?: FullSalesAvatarSnapshot | null;
     } | null = null;
@@ -517,6 +518,7 @@ export async function POST(request: Request) {
 
         fullSalesAvatarContext = {
           currentAvatar: mappedCurrentAvatar,
+          franchiseVertical,
           industryKey: mappedCurrentAvatar.industryKey,
           previousAvatar,
         };
@@ -628,6 +630,7 @@ export async function POST(request: Request) {
       resolvedSystemPrompt = getSystemPrompt({
         appointmentAvatarContext,
         complaintAvatarContext,
+        franchiseVertical,
         fullSalesAvatarContext,
         industryKey,
         sessionId: session.id,
@@ -765,6 +768,7 @@ export async function POST(request: Request) {
         const selection = selectComplaintAvatar({
           channel: session.complaint_channel,
           difficulty: session.session_difficulty ?? "medium",
+          franchiseVertical,
           industryKey,
           previousAvatar,
         });
@@ -826,6 +830,7 @@ export async function POST(request: Request) {
         resolvedSystemPrompt = getSystemPrompt({
           appointmentAvatarContext,
           complaintAvatarContext,
+          franchiseVertical,
           fullSalesAvatarContext,
           industryKey,
           sessionId: session.id,

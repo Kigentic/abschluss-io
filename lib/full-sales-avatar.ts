@@ -1,4 +1,4 @@
-import type { IndustryKey } from "@/lib/industries";
+import type { FranchiseVerticalKey, IndustryKey } from "@/lib/industries";
 import {
   calculateSimulationAvatarDifference,
   describeDifferenceDimensions,
@@ -55,6 +55,7 @@ export type FullSalesAvatarSnapshot = FullSalesAvatarCore & {
 
 export type FullSalesAvatarPromptContext = {
   currentAvatar: FullSalesAvatar | FullSalesAvatarSnapshot;
+  franchiseVertical?: FranchiseVerticalKey;
   industryKey?: IndustryKey;
   previousAvatar?: FullSalesAvatar | FullSalesAvatarSnapshot | null;
 };
@@ -162,6 +163,7 @@ function getFinanceObjectionsByDisc(
 export function selectFullSalesAvatar(params: {
   candidates: readonly FullSalesAvatarCandidate[];
   difficulty: SessionDifficulty;
+  franchiseVertical?: FranchiseVerticalKey;
   industryKey?: IndustryKey;
   previousAvatar?: FullSalesAvatarSnapshot | null;
   sessionHistory?: FullSalesAvatarHistoryEntry[];
@@ -360,6 +362,13 @@ Der Disc-Typ und die Einwände müssen sich spürbar im Verhalten zeigen.`,
   Gelb: beziehungsorientiert, will einfache Verständlichkeit und positive Perspektive.
   Grün: sicherheitsorientiert, braucht Ruhe, Stabilität und soziale Absicherung.
   Blau: analytisch, will Belege, Struktur und belastbare Herleitung.`);
+  }
+
+  if (context.industryKey === "franchise") {
+    blocks.push(`FRANCHISE-SPEZIFISCHE VERHALTENSREGELN:
+- Subbranche: ${context.franchiseVertical ?? "other"}.
+- Der Kunde bewertet immer auch operative Umsetzbarkeit, Standortlogik, laufende Betreuung und Wirtschaftlichkeit.
+- Entscheide nicht nur emotional, sondern klar entlang Business-Logik und Risikoabwägung.`);
   }
 
   if (context.previousAvatar) {

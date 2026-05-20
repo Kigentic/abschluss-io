@@ -1,6 +1,6 @@
 import type { AppointmentAvatarPromptContext } from "@/lib/appointment-setting-avatar";
 import { buildAppointmentAvatarPrompt } from "@/lib/appointment-setting-avatar";
-import type { IndustryKey } from "@/lib/industries";
+import type { FranchiseVerticalKey, IndustryKey } from "@/lib/industries";
 import type { ComplaintAvatarPromptContext } from "@/lib/complaint-avatar";
 import { buildComplaintAvatarPrompt } from "@/lib/complaint-avatar";
 import type { FullSalesAvatarPromptContext } from "@/lib/full-sales-avatar";
@@ -18,6 +18,7 @@ type GetSystemPromptParams = {
   appointmentAvatarContext?: AppointmentAvatarPromptContext | null;
   complaintAvatarContext?: ComplaintAvatarPromptContext | null;
   fullSalesAvatarContext?: FullSalesAvatarPromptContext | null;
+  franchiseVertical: FranchiseVerticalKey;
   industryKey: IndustryKey;
   sessionId?: string;
   sessionTitle?: string | null;
@@ -35,6 +36,26 @@ function getIndustryAppointmentContextLabel(industryKey: IndustryKey) {
     case "fitness":
     default:
       return "Fitness / Boutique Studio";
+  }
+}
+
+function getFranchiseVerticalOverlay(vertical: FranchiseVerticalKey) {
+  switch (vertical) {
+    case "restaurant":
+      return "Franchise-Subbranche: Restaurant/Gastronomie. Fokus auf Wareneinsatz, Personal, Schichtfähigkeit, Standortfrequenz, Hygiene-/Prozessstandards und Margenstabilität.";
+    case "fashion":
+      return "Franchise-Subbranche: Bekleidung/Fashion. Fokus auf Sortimentssteuerung, Saisonabhängigkeit, Retourenquote, Flächenproduktivität und Warenrotation.";
+    case "fitness":
+      return "Franchise-Subbranche: Gym/Fitness. Fokus auf Mitgliedergewinnung/-bindung, Auslastung, Trainerqualität, Preis-/Leistungsempfinden und Churn.";
+    case "beauty":
+      return "Franchise-Subbranche: Beauty. Fokus auf Terminquote, Auslastung, Wiederbuchung, Servicequalität und Personalqualifikation.";
+    case "retail":
+      return "Franchise-Subbranche: Retail/Handel. Fokus auf Frequenz, Conversion, Warenverfügbarkeit, Retouren, Flächenrentabilität.";
+    case "services":
+      return "Franchise-Subbranche: Dienstleistung. Fokus auf Terminpipeline, Service-Qualität, Kapazitätsplanung, Wiederkaufrate und Bewertungsmanagement.";
+    case "other":
+    default:
+      return "Franchise-Subbranche: Sonstiges. Fokus auf belastbare Standortlogik, operative Umsetzbarkeit, Kostenstruktur und skalierbare Prozesse.";
   }
 }
 
@@ -93,6 +114,7 @@ export function getSystemPrompt({
   appointmentAvatarContext,
   complaintAvatarContext,
   fullSalesAvatarContext,
+  franchiseVertical,
   industryKey,
   sessionTitle,
   sessionType,
@@ -101,6 +123,9 @@ export function getSystemPrompt({
   const industryConfig = getIndustryPromptConfig(industryKey);
 
   const promptParts = [BASE_SHARED_PROMPT, industryConfig.blocks.shared];
+  if (industryKey === "franchise") {
+    promptParts.push(getFranchiseVerticalOverlay(franchiseVertical));
+  }
 
   switch (flow) {
     case "appointment_setting":

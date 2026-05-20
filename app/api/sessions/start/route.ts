@@ -52,6 +52,7 @@ type RequestBody = {
 type OrganizationMembership = {
   organization_id: string;
   organizations: {
+    franchise_vertical: string | null;
     industry_key: string | null;
     industry_locked: boolean | null;
     prompt_profile_key: string | null;
@@ -384,7 +385,7 @@ export async function POST(request: Request) {
     const { data: membership, error: membershipError } = await supabase
       .from("organization_members")
       .select(
-        "organization_id, organizations(industry_key, prompt_profile_key, industry_locked)"
+        "organization_id, organizations(industry_key, prompt_profile_key, industry_locked, franchise_vertical)"
       )
       .eq("user_id", userId)
       .limit(1)
@@ -601,6 +602,7 @@ export async function POST(request: Request) {
       const selection = selectFullSalesAvatar({
         candidates: industryPromptConfig.openings.fullSales,
         difficulty: automaticDifficulty ?? "medium",
+        franchiseVertical: industrySettings.franchiseVertical,
         industryKey: industrySettings.industryKey,
         previousAvatar,
         sessionHistory,
@@ -726,6 +728,7 @@ export async function POST(request: Request) {
 
       const selection = selectAppointmentAvatar({
         difficulty: automaticDifficulty ?? "medium",
+        franchiseVertical: industrySettings.franchiseVertical,
         industryKey: industrySettings.industryKey,
         leadSource,
         previousAvatar: previousAvatar
@@ -872,6 +875,7 @@ export async function POST(request: Request) {
       const selection = selectComplaintAvatar({
         channel: selectedComplaintChannel,
         difficulty: automaticDifficulty ?? "easy",
+        franchiseVertical: industrySettings.franchiseVertical,
         industryKey: industrySettings.industryKey,
         previousAvatar: previousAvatar
           ? {

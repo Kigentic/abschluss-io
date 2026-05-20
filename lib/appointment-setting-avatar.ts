@@ -1,5 +1,5 @@
 import type { AppointmentLeadSource } from "@/lib/training-session-config";
-import type { IndustryKey } from "@/lib/industries";
+import type { FranchiseVerticalKey, IndustryKey } from "@/lib/industries";
 import {
   calculateSimulationAvatarDifference,
   describeDifferenceDimensions,
@@ -124,6 +124,43 @@ function getAppointmentSeedsForIndustry(industryKey: IndustryKey) {
   return DEFAULT_APPOINTMENT_SEEDS;
 }
 
+function getFranchiseAppointmentSeeds(vertical: FranchiseVerticalKey): readonly AppointmentSeed[] {
+  switch (vertical) {
+    case "restaurant":
+      return [
+        {
+          leadSource: "Webseite",
+          leadContext:
+            "interessiert sich für ein Gastro-Franchise, ist aber unsicher bei Personalkosten und Standortfrequenz",
+          leadGoal:
+            "will vor einem Termin verstehen, wie realistisch Marge und Personalplanung im Alltag sind",
+        },
+      ];
+    case "fashion":
+      return [
+        {
+          leadSource: "Anzeige",
+          leadContext:
+            "denkt über ein Fashion-Franchise nach, zweifelt aber an Saisonrisiken und Warenbindung",
+          leadGoal:
+            "will prüfen, ob der Termin klare Antworten zu Sortiment, Rotation und Kapitalbindung liefert",
+        },
+      ];
+    case "fitness":
+      return [
+        {
+          leadSource: "Empfehlung",
+          leadContext:
+            "interessiert sich für ein Gym-Franchise und prüft Mitgliederaufbau sowie operative Belastung",
+          leadGoal:
+            "will im Termin belastbar verstehen, wie schnell ein Standort auf stabile Auslastung kommt",
+        },
+      ];
+    default:
+      return [];
+  }
+}
+
 function getRandomItem<T>(items: readonly T[]) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -179,12 +216,18 @@ function buildOpeningMessage(params: {
 
 function buildAppointmentAvatar(params: {
   difficulty: SessionDifficulty;
+  franchiseVertical?: FranchiseVerticalKey;
   industryKey: IndustryKey;
   leadSource: AppointmentLeadSource;
   previousAvatar?: AppointmentAvatarSnapshot | null;
 }): AppointmentAvatarSelection {
+  const industrySeeds = getAppointmentSeedsForIndustry(params.industryKey);
+  const verticalSeeds =
+    params.industryKey === "franchise"
+      ? getFranchiseAppointmentSeeds(params.franchiseVertical ?? "other")
+      : [];
   const seed = getRandomItem(
-    getAppointmentSeedsForIndustry(params.industryKey).filter(
+    [...verticalSeeds, ...industrySeeds].filter(
       (entry) => entry.leadSource === params.leadSource
     )
   );
@@ -217,6 +260,7 @@ function buildAppointmentAvatar(params: {
 
 export function selectAppointmentAvatar(params: {
   difficulty: SessionDifficulty;
+  franchiseVertical?: FranchiseVerticalKey;
   industryKey: IndustryKey;
   leadSource: AppointmentLeadSource;
   previousAvatar?: AppointmentAvatarSnapshot | null;

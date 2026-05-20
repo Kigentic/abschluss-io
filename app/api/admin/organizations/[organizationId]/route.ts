@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 
 import { isAdminAuthFailure, requireMasterAdmin } from "@/lib/admin-server";
-import { INDUSTRY_KEYS, normalizeIndustryKey } from "@/lib/industries";
+import {
+  FRANCHISE_VERTICAL_KEYS,
+  normalizeFranchiseVerticalKey,
+  INDUSTRY_KEYS,
+  normalizeIndustryKey,
+} from "@/lib/industries";
 
 type OrganizationRecord = {
+  franchise_vertical: string | null;
   id: string;
   industry_key: string | null;
   industry_locked: boolean | null;
@@ -11,6 +17,7 @@ type OrganizationRecord = {
 };
 
 type PatchRequestBody = {
+  franchiseVertical?: string | null;
   industryKey?: string;
   industryLocked?: boolean;
   promptProfileKey?: string | null;
@@ -98,13 +105,13 @@ export async function PATCH(
     }
 
     const { organizationId } = await context.params;
-    const { industryKey, industryLocked, promptProfileKey } =
+    const { franchiseVertical, industryKey, industryLocked, promptProfileKey } =
       (await request.json()) as PatchRequestBody;
 
     const { data: organization, error: organizationError } =
       await adminAuth.serviceRoleClient
         .from("organizations")
-        .select("id, industry_key, prompt_profile_key, industry_locked")
+        .select("id, industry_key, prompt_profile_key, industry_locked, franchise_vertical")
         .eq("id", organizationId)
         .maybeSingle<OrganizationRecord>();
 
@@ -138,8 +145,13 @@ export async function PATCH(
       typeof industryKey === "string"
         ? normalizeIndustryKey(industryKey)
         : normalizeIndustryKey(organization.industry_key);
+    const normalizedFranchiseVertical =
+      typeof franchiseVertical === "string"
+        ? normalizeFranchiseVerticalKey(franchiseVertical)
+        : null;
 
     const updatePayload: {
+      franchise_vertical?: string | null;
       industry_key?: string;
       industry_locked?: boolean;
       prompt_profile_key?: string | null;
@@ -147,6 +159,9 @@ export async function PATCH(
 
     if (typeof industryKey === "string") {
       updatePayload.industry_key = nextIndustryKey;
+      if (nextIndustryKey !== "franchise") {
+        updatePayload.franchise_vertical = null;
+      }
     }
 
     if (typeof industryLocked === "boolean") {
@@ -157,8 +172,29 @@ export async function PATCH(
       updatePayload.prompt_profile_key = normalizedPromptProfileKey;
     }
 
+    if (
+      franchiseVertical !== undefined &&
+      !(franchiseVertical === null || (FRANCHISE_VERTICAL_KEYS as readonly string[]).includes(franchiseVertical))
+    ) {
+      return NextResponse.json(
+        { error: "franchiseVertical ist ungueltig." },
+        { status: 400 }
+      );
+    }
+
+    if (franchiseVertical !== undefined) {
+      updatePayload.franchise_vertical =
+        nextIndustryKey === "franchise"
+          ? normalizedFranchiseVertical ?? normalizeFranchiseVerticalKey(organization.franchise_vertical)
+          : null;
+    }
+
     if (Object.keys(updatePayload).length === 0) {
       return NextResponse.json({
+        franchiseVertical:
+          nextIndustryKey === "franchise"
+            ? normalizeFranchiseVerticalKey(organization.franchise_vertical)
+            : null,
         industryKey: normalizeIndustryKey(organization.industry_key),
         industryLocked: organization.industry_locked ?? true,
         organizationId,
@@ -172,7 +208,7 @@ export async function PATCH(
         .from("organizations")
         .update(updatePayload)
         .eq("id", organizationId)
-        .select("id, industry_key, prompt_profile_key, industry_locked")
+        .select("id, industry_key, prompt_profile_key, industry_locked, franchise_vertical")
         .single<OrganizationRecord>();
 
     if (updateError) {
@@ -183,6 +219,10 @@ export async function PATCH(
     }
 
     return NextResponse.json({
+      franchiseVertical:
+        normalizeIndustryKey(updatedOrganization.industry_key) === "franchise"
+          ? normalizeFranchiseVerticalKey(updatedOrganization.franchise_vertical)
+          : null,
       industryKey: normalizeIndustryKey(updatedOrganization.industry_key),
       industryLocked: updatedOrganization.industry_locked ?? true,
       organizationId,

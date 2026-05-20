@@ -8,6 +8,34 @@ export const INDUSTRY_KEYS = [
 ] as const;
 
 export type IndustryKey = (typeof INDUSTRY_KEYS)[number];
+export const FRANCHISE_VERTICAL_KEYS = [
+  "restaurant",
+  "fashion",
+  "fitness",
+  "beauty",
+  "retail",
+  "services",
+  "other",
+] as const;
+
+export type FranchiseVerticalKey = (typeof FRANCHISE_VERTICAL_KEYS)[number];
+export const DEFAULT_FRANCHISE_VERTICAL_KEY: FranchiseVerticalKey = "other";
+export const FRANCHISE_VERTICAL_LABELS: Record<FranchiseVerticalKey, string> = {
+  beauty: "Beauty",
+  fashion: "Bekleidung",
+  fitness: "Gym/Fitness",
+  other: "Sonstiges",
+  restaurant: "Restaurant",
+  retail: "Retail/Handel",
+  services: "Dienstleistung",
+};
+export const FRANCHISE_VERTICAL_OPTIONS = FRANCHISE_VERTICAL_KEYS.map((key) => ({
+  label: FRANCHISE_VERTICAL_LABELS[key],
+  value: key,
+})) as ReadonlyArray<{
+  label: string;
+  value: FranchiseVerticalKey;
+}>;
 
 export const DEFAULT_INDUSTRY_KEY: IndustryKey = "fitness";
 
@@ -27,10 +55,25 @@ export const INDUSTRY_OPTIONS = INDUSTRY_KEYS.map((industryKey) => ({
 }>;
 
 export type OrganizationIndustrySettings = {
+  franchise_vertical: string | null;
   industry_key: string | null;
   industry_locked: boolean | null;
   prompt_profile_key: string | null;
 };
+
+export function isFranchiseVerticalKey(value: string): value is FranchiseVerticalKey {
+  return (FRANCHISE_VERTICAL_KEYS as readonly string[]).includes(value);
+}
+
+export function normalizeFranchiseVerticalKey(
+  value: string | null | undefined
+): FranchiseVerticalKey {
+  if (!value) {
+    return DEFAULT_FRANCHISE_VERTICAL_KEY;
+  }
+
+  return isFranchiseVerticalKey(value) ? value : DEFAULT_FRANCHISE_VERTICAL_KEY;
+}
 
 export function isIndustryKey(value: string): value is IndustryKey {
   return (INDUSTRY_KEYS as readonly string[]).includes(value);
@@ -62,6 +105,7 @@ export function resolveIndustrySettings(
   const industryKey = normalizeIndustryKey(settings?.industry_key);
 
   return {
+    franchiseVertical: normalizeFranchiseVerticalKey(settings?.franchise_vertical),
     industryKey,
     industryLocked: settings?.industry_locked ?? true,
     promptProfileKey: resolvePromptProfileKey(settings),
@@ -78,7 +122,7 @@ export async function getOrganizationIndustrySettings(
 
   const { data, error } = await supabase
     .from("organizations")
-    .select("industry_key, prompt_profile_key, industry_locked")
+    .select("industry_key, prompt_profile_key, industry_locked, franchise_vertical")
     .eq("id", organizationId)
     .maybeSingle<OrganizationIndustrySettings>();
 
