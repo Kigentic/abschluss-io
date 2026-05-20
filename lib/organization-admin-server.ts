@@ -136,20 +136,6 @@ export async function requireOrganizationAdmin(
 
   const isMasterAdmin = profile.role === "master_admin";
 
-  if (!isMasterAdmin) {
-    const accessState = await resolveAppAccessStateForUser({
-      serviceRoleClient,
-      userId: user.id,
-    });
-
-    if (!accessState.allowed) {
-      return {
-        error: accessState.message,
-        status: 403,
-      };
-    }
-  }
-
   const membershipQuery = supabase
     .from("organization_members")
     .select(
@@ -212,6 +198,20 @@ export async function requireOrganizationAdmin(
   }
 
   if (!membership?.organizations) {
+    if (!isMasterAdmin) {
+      const accessState = await resolveAppAccessStateForUser({
+        serviceRoleClient,
+        userId: user.id,
+      });
+
+      if (!accessState.allowed) {
+        return {
+          error: accessState.message,
+          status: 403,
+        };
+      }
+    }
+
     return {
       error: "Kein Zugriff auf diese Organisations-Verwaltung.",
       status: 403,
@@ -230,6 +230,32 @@ export async function requireOrganizationAdmin(
       error: "Kein Zugriff auf diese Organisations-Verwaltung.",
       status: 403,
     };
+  }
+
+  if (!isMasterAdmin) {
+    const accessState = await resolveAppAccessStateForUser({
+      serviceRoleClient,
+      userId: user.id,
+    });
+
+    // Team-Mitglieder mit aktiver Team-Organisation dürfen die Organisationsverwaltung
+    // nutzen, auch wenn der zentrale App-Access-State aktuell keine aktive Subscription
+    // zurückliefert (z. B. Übergangs-/Dateninkonsistenzen).
+    if (!accessState.allowed && membership.organizations.seat_limit > 1) {
+      return {
+        membership,
+        serviceRoleClient,
+        supabase,
+        userId: user.id,
+      };
+    }
+
+    if (!accessState.allowed) {
+      return {
+        error: accessState.message,
+        status: 403,
+      };
+    }
   }
 
   return {

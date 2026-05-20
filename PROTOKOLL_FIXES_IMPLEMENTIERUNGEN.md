@@ -246,3 +246,45 @@ Branch: `main`
   - `PROTOKOLL_FIXES_IMPLEMENTIERUNGEN.md`
 - Änderung:
   - Zentrale Nachverfolgbarkeit der Implementierungen inkl. Commits, Dateiliste und Änderungstyp.
+
+## 11) Finance-Ausbau (eigenständige Logik)
+
+### 11.1 Eigenständige Finance-Logik über Kernmodule ausgebaut
+- Commit: `bbfee10`
+- Betroffene Dateien:
+  - `lib/prompts/industries/finance.ts`
+  - `lib/appointment-setting-avatar.ts`
+  - `lib/complaint-avatar.ts`
+  - `lib/full-sales-avatar.ts`
+  - `app/api/sessions/start/route.ts`
+- Änderung:
+  - Finance als eigenständige Kategorie im gleichen Schema wie Energy ausgebaut.
+  - Terminsetting: finance-spezifische Lead-Seeds nach Leadquelle.
+  - Beschwerdemanagement: finance-spezifische Seed-Logik und Branchenrouting.
+  - Full-Sales-Avatarlogik: finance-spezifische DISG-/Einwandsteuerung ergänzt.
+  - Prompt-Blöcke in Finance inhaltlich auf Finanzberatung statt Studio-Kontext ausgerichtet.
+
+### 11.2 Finance-Beschwerdekatalog massiv erweitert (analog Energy-Tiefe)
+- Commit: `12260dc`
+- Betroffene Dateien:
+  - `lib/complaint-avatar.ts`
+- Änderung:
+  - Umfangreicher Finance-Beschwerdekatalog ergänzt für:
+    - Versicherung (Leistungsfälle, Beitragserhöhungen, Klauseln, Kündigungen)
+    - Kredit/Finanzierung/Leasing (Zinsanpassung, versteckte Kosten, Laufzeit/Tilgung)
+    - Tarifvermittlung (Strom/Gas, Boni, Preisfallen)
+    - Service/Prozess (Rückrufe, Zuständigkeiten, Portale, Wechsel, Betreuung)
+    - Anlage/Fonds/ETF/Vermögensaufbau (Renditeabweichung, Gebühren, Risikofit, Diversifikation)
+  - Seeds werden finance-spezifisch gezogen, ohne Vermischung mit anderen Branchen.
+
+### 11.3 Finance-Situationscoaching strukturiert eingerichtet
+- Commit: `2a58917`
+- Betroffene Dateien:
+  - `lib/prompts/industries/finance.ts`
+- Änderung:
+  - `situationCoaching`-Block auf klaren finance-spezifischen Prüfpfad umgestellt:
+    1) Bedarf/Ausgangslage
+    2) Verständlichkeit/Transparenz
+    3) Eignung/Suitability
+    4) Verbindlichkeit im Prozess
+  - Opening für Situationscoaching konkretisiert (Kundentyp, Produkt/Thema, kritischer Moment, Einwand, Ziel).
