@@ -12,6 +12,7 @@ type MembershipRecord = {
   organization_id: string;
   role_in_org: string;
   organizations: {
+    franchise_vertical?: string | null;
     id: string;
     industry_key: string | null;
     industry_locked: boolean | null;
@@ -23,6 +24,7 @@ type MembershipRecord = {
 };
 
 type OrganizationFallbackRecord = {
+  franchise_vertical?: string | null;
   id: string;
   industry_key: string | null;
   industry_locked: boolean | null;
@@ -143,9 +145,21 @@ export async function requireOrganizationAdmin(
     )
     .eq("user_id", user.id);
 
-  const { data: membership, error: membershipError } = await (isMasterAdmin
-    ? membershipQuery.limit(1).maybeSingle<MembershipRecord>()
-    : membershipQuery.limit(1).maybeSingle<MembershipRecord>());
+  const membershipResult = await membershipQuery.limit(1).maybeSingle<MembershipRecord>();
+  const membershipFallbackResult = membershipResult.error?.message?.includes(
+    "franchise_vertical"
+  )
+    ? await supabase
+        .from("organization_members")
+        .select(
+          "organization_id, role_in_org, organizations!inner(id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked)"
+        )
+        .eq("user_id", user.id)
+        .limit(1)
+        .maybeSingle<MembershipRecord>()
+    : null;
+  const { data: membership, error: membershipError } =
+    membershipFallbackResult ?? membershipResult;
 
   if (membershipError) {
     await logSystemEvent({
@@ -165,16 +179,31 @@ export async function requireOrganizationAdmin(
   }
 
   if (isMasterAdmin && !membership?.organizations) {
+    const fallbackOrganizationWithFranchise = await serviceRoleClient
+      .from("organizations")
+      .select(
+        "id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked, franchise_vertical"
+      )
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle<OrganizationFallbackRecord>();
+    const fallbackOrganizationWithoutFranchise =
+      fallbackOrganizationWithFranchise.error?.message?.includes(
+        "franchise_vertical"
+      )
+        ? await serviceRoleClient
+            .from("organizations")
+            .select(
+              "id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked"
+            )
+            .eq("is_active", true)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle<OrganizationFallbackRecord>()
+        : null;
     const { data: fallbackOrganization, error: fallbackOrganizationError } =
-      await serviceRoleClient
-        .from("organizations")
-        .select(
-          "id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked, franchise_vertical"
-        )
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle<OrganizationFallbackRecord>();
+      fallbackOrganizationWithoutFranchise ?? fallbackOrganizationWithFranchise;
 
     if (fallbackOrganizationError) {
       return {

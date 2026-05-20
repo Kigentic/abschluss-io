@@ -19,6 +19,7 @@ import {
 
 type OrganizationRecord = {
   created_at: string;
+  franchise_vertical?: string | null;
   id: string;
   industry_key: string | null;
   industry_locked: boolean | null;
@@ -220,8 +221,26 @@ export async function GET(request: Request) {
 
     const { serviceRoleClient } = adminAuth;
 
+    const { data: organizationsData, error: organizationsError } =
+      await serviceRoleClient
+        .from("organizations")
+        .select(
+          "id, organization_name, seat_limit, is_active, created_at, industry_key, prompt_profile_key, industry_locked, franchise_vertical"
+        )
+        .order("organization_name", { ascending: true });
+
+    const organizationsResult = organizationsError?.message?.includes(
+      "franchise_vertical"
+    )
+      ? await serviceRoleClient
+          .from("organizations")
+          .select(
+            "id, organization_name, seat_limit, is_active, created_at, industry_key, prompt_profile_key, industry_locked"
+          )
+          .order("organization_name", { ascending: true })
+      : { data: organizationsData, error: organizationsError };
+
     const [
-      organizationsResult,
       subscriptionsResult,
       membershipsResult,
       invitationsResult,
@@ -229,12 +248,6 @@ export async function GET(request: Request) {
       systemEventsResult,
       emailMap,
     ] = await Promise.all([
-      serviceRoleClient
-        .from("organizations")
-        .select(
-          "id, organization_name, seat_limit, is_active, created_at, industry_key, prompt_profile_key, industry_locked, franchise_vertical"
-        )
-        .order("organization_name", { ascending: true }),
       serviceRoleClient
         .from("subscriptions")
         .select("organization_id, plan_key, status, created_at, current_period_end")
