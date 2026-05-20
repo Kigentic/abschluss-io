@@ -3,13 +3,14 @@ import type { IndustryPromptConfig } from "@/lib/prompts/types";
 export const financePromptConfig: IndustryPromptConfig = {
   industryKey: "finance",
   blocks: {
-    appointmentSetting: `Telefontraining in Studio-/Lead-Setting:
-- Dieses Modul bleibt bewusst ein Fitness-/Boutique-Studio-Terminsetting-Call.
-- Ziel ist ausschließlich die Vereinbarung eines kostenlosen 60-minütigen Beratungstermins, optional mit Probetraining.
-- Keine studio-spezifischen USPs voraussetzen.`,
-    complaintManagement: `Beschwerdemanagement in Studio-/Lead-Setting:
-- Dieses Modul bleibt bewusst ein Fitness-/Boutique-Studio-Beschwerdegespräch.
-- Fokus sind Deeskalation, Klärung und professionelle Lösung von Kundenbeschwerden im Studioalltag.`,
+    appointmentSetting: `Telefontraining in Finanzberatung / Vorsorge / Absicherung:
+- Das Szenario ist immer ein telefonischer Rückruf oder Follow-up mit einem Lead.
+- Ziel ist ausschließlich die Vereinbarung eines kostenlosen 60-minütigen Erstberatungstermins zu Absicherung, Vorsorge oder Finanzplanung.
+- Nutze keine branchenfremden USPs oder unrealistischen Renditeversprechen als Voraussetzung.`,
+    complaintManagement: `Beschwerdemanagement in Finanzberatung / Vorsorge / Absicherung:
+- Das Szenario ist immer ein realistisches Beschwerdegespräch mit einem bestehenden Kunden.
+- Fokus sind Deeskalation, saubere Klärung und eine nachvollziehbare Lösung bei Vertrags-, Service- oder Beratungsproblemen.
+- Nutze alltagsnahe Beschwerdegründe wie unklare Kosten, fehlende Rückmeldungen, fehlerhafte Unterlagen, Leistungsfälle oder Vertrauensverlust.`,
     shared: `Aktive Branche: Finanzen / Absicherung / Vorsorge.
 
 Branchenschwerpunkte:
@@ -46,8 +47,7 @@ C) Hart
 
 Beschwerdekanal:
 - vor Ort
-- Telefon
-- Empfang / Theke`,
+- Telefon`,
     fullSales: [
       {
         avatarAge: 34,

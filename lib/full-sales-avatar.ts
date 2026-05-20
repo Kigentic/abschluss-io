@@ -141,6 +141,24 @@ function getEnergyObjectionsByDisc(
   return ["need_to_think", "fear_of_commitment", "uncertainty"];
 }
 
+function getFinanceObjectionsByDisc(
+  discType: FullSalesAvatar["avatarDiscType"]
+): FullSalesAvatar["avatarObjections"] {
+  if (discType === "dominant") {
+    return ["price", "time", "skepticism_about_support"];
+  }
+
+  if (discType === "analytical") {
+    return ["low_trust", "need_to_think", "uncertainty"];
+  }
+
+  if (discType === "steady") {
+    return ["partner_approval", "need_to_think", "fear_of_commitment"];
+  }
+
+  return ["need_to_think", "uncertainty", "price"];
+}
+
 export function selectFullSalesAvatar(params: {
   candidates: readonly FullSalesAvatarCandidate[];
   difficulty: SessionDifficulty;
@@ -229,6 +247,10 @@ export function selectFullSalesAvatar(params: {
       }
 
       avatar.avatarObjections = getEnergyObjectionsByDisc(avatar.avatarDiscType);
+    }
+
+    if (params.industryKey === "finance") {
+      avatar.avatarObjections = getFinanceObjectionsByDisc(avatar.avatarDiscType);
     }
 
     avatar.openingMessage = buildOpeningMessage(avatar);
@@ -327,6 +349,17 @@ Der Disc-Typ und die Einwände müssen sich spürbar im Verhalten zeigen.`,
 - Argumentiere je nach DISG-Typ klar unterschiedlich.
 - ${getEnergyCreditOpennessHint(currentAvatar)}
 - Interessen koennen kombiniert auftreten: Strom sparen, guenstiger heizen, Umweltaspekte, Wertsteigerung, Foerdermittel.`);
+  }
+
+  if (context.industryKey === "finance") {
+    blocks.push(`FINANCE-SPEZIFISCHE VERHALTENSREGELN:
+- Der Kunde erwartet klare, nachvollziehbare Aussagen zu Risiko, Kosten, Absicherung und Zeithorizont.
+- Reagiere auf unklare Aussagen besonders sensibel bei Transparenz, Vertrauensaufbau und Verbindlichkeit.
+- Je nach DISG-Typ variieren Tempo und Argumentation deutlich:
+  Rot: direkt, ergebnisorientiert, schnell auf den Punkt.
+  Gelb: beziehungsorientiert, will einfache Verständlichkeit und positive Perspektive.
+  Grün: sicherheitsorientiert, braucht Ruhe, Stabilität und soziale Absicherung.
+  Blau: analytisch, will Belege, Struktur und belastbare Herleitung.`);
   }
 
   if (context.previousAvatar) {

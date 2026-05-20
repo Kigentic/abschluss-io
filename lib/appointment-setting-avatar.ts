@@ -1,4 +1,5 @@
 import type { AppointmentLeadSource } from "@/lib/training-session-config";
+import type { IndustryKey } from "@/lib/industries";
 import {
   calculateSimulationAvatarDifference,
   describeDifferenceDimensions,
@@ -53,7 +54,7 @@ type AppointmentAvatarSelection = {
   comparison: SimulationAvatarDifference | null;
 };
 
-const APPOINTMENT_SEEDS: readonly AppointmentSeed[] = [
+const DEFAULT_APPOINTMENT_SEEDS: readonly AppointmentSeed[] = [
   {
     leadSource: "Webseite",
     leadContext:
@@ -83,6 +84,45 @@ const APPOINTMENT_SEEDS: readonly AppointmentSeed[] = [
       "will keine Standardberatung, sondern einen nachvollziehbaren Grund, warum das für die eigene Lage sinnvoll ist",
   },
 ];
+
+const FINANCE_APPOINTMENT_SEEDS: readonly AppointmentSeed[] = [
+  {
+    leadSource: "Webseite",
+    leadContext:
+      "hat sich über die Webseite eingetragen, weil Absicherung und Altersvorsorge aktuell zu lange aufgeschoben wurden",
+    leadGoal:
+      "will in einem Termin klar priorisieren, welche Risiken zuerst geschlossen werden sollten",
+  },
+  {
+    leadSource: "Anzeige",
+    leadContext:
+      "kam über eine Anzeige und ist skeptisch, ob die Beratung konkret oder nur verkaufsgetrieben ist",
+    leadGoal:
+      "will schnell prüfen, ob der Termin nachvollziehbaren Mehrwert für die eigene Finanzsituation bietet",
+  },
+  {
+    leadSource: "Promo-Stand",
+    leadContext:
+      "hat die Kontaktdaten am Stand hinterlassen, ist aber unsicher, ob das Thema jetzt wirklich dringend ist",
+    leadGoal:
+      "will verstehen, warum ein Gespräch jetzt sinnvoll ist und welche konkreten Themen vorbereitet werden sollten",
+  },
+  {
+    leadSource: "Empfehlung",
+    leadContext:
+      "kam über Empfehlung, möchte aber unabhängig prüfen, ob Beratung und Vorgehen transparent und passend sind",
+    leadGoal:
+      "will einen Termin nur dann zusagen, wenn die Beratung strukturiert, verständlich und ohne Druck wirkt",
+  },
+];
+
+function getAppointmentSeedsForIndustry(industryKey: IndustryKey) {
+  if (industryKey === "finance") {
+    return FINANCE_APPOINTMENT_SEEDS;
+  }
+
+  return DEFAULT_APPOINTMENT_SEEDS;
+}
 
 function getRandomItem<T>(items: readonly T[]) {
   return items[Math.floor(Math.random() * items.length)];
@@ -139,11 +179,14 @@ function buildOpeningMessage(params: {
 
 function buildAppointmentAvatar(params: {
   difficulty: SessionDifficulty;
+  industryKey: IndustryKey;
   leadSource: AppointmentLeadSource;
   previousAvatar?: AppointmentAvatarSnapshot | null;
 }): AppointmentAvatarSelection {
   const seed = getRandomItem(
-    APPOINTMENT_SEEDS.filter((entry) => entry.leadSource === params.leadSource)
+    getAppointmentSeedsForIndustry(params.industryKey).filter(
+      (entry) => entry.leadSource === params.leadSource
+    )
   );
   const selection = selectDiverseSimulationAvatarProfile({
     module: "appointment_setting",
@@ -174,6 +217,7 @@ function buildAppointmentAvatar(params: {
 
 export function selectAppointmentAvatar(params: {
   difficulty: SessionDifficulty;
+  industryKey: IndustryKey;
   leadSource: AppointmentLeadSource;
   previousAvatar?: AppointmentAvatarSnapshot | null;
 }) {

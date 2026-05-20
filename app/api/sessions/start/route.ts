@@ -726,6 +726,7 @@ export async function POST(request: Request) {
 
       const selection = selectAppointmentAvatar({
         difficulty: automaticDifficulty ?? "medium",
+        industryKey: industrySettings.industryKey,
         leadSource,
         previousAvatar: previousAvatar
           ? ({

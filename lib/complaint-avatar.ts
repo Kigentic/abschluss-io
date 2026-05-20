@@ -208,9 +208,87 @@ const ENERGY_COMPLAINT_SEEDS: readonly ComplaintSeed[] = ENERGY_COMPLAINT_SEED_I
   })
 );
 
+type FinanceComplaintSeedInput = {
+  avatarComplaintContext: string;
+  avatarComplaintTopic: string;
+  avatarComplaintType: string;
+};
+
+const FINANCE_COMPLAINT_SEED_INPUTS: readonly FinanceComplaintSeedInput[] = [
+  {
+    avatarComplaintTopic: "Unklare Vertragskosten",
+    avatarComplaintContext:
+      "im Vertrag tauchen Kostenpositionen auf, die im Gespräch so nicht klar erklärt wurden",
+    avatarComplaintType: "Kostentransparenzproblem",
+  },
+  {
+    avatarComplaintTopic: "Leistungsfall zieht sich ohne klare Rückmeldung",
+    avatarComplaintContext:
+      "im Leistungsfall fehlen verbindliche Aussagen zu Status, Fristen und nächsten Schritten",
+    avatarComplaintType: "Serviceverzug",
+  },
+  {
+    avatarComplaintTopic: "Unterlagen fehlerhaft oder unvollständig",
+    avatarComplaintContext:
+      "eingereichte Unterlagen sind fehlerhaft erfasst oder es fehlen wichtige Dokumente",
+    avatarComplaintType: "Prozessfehler",
+  },
+  {
+    avatarComplaintTopic: "Rückruf zugesagt, aber mehrfach nicht erfolgt",
+    avatarComplaintContext:
+      "mehrfach zugesagte Rückrufe sind ausgeblieben und der Fall bleibt ungelöst",
+    avatarComplaintType: "Kommunikationsproblem",
+  },
+  {
+    avatarComplaintTopic: "Beratungsergebnis passt nicht zur Lebenssituation",
+    avatarComplaintContext:
+      "die vorgeschlagene Lösung wirkt nicht passend zur aktuellen familiären und finanziellen Situation",
+    avatarComplaintType: "Beratungsfehlpassung",
+  },
+  {
+    avatarComplaintTopic: "Beitragserhöhung ohne nachvollziehbare Erklärung",
+    avatarComplaintContext:
+      "Beiträge sind gestiegen, ohne dass die Gründe transparent und verständlich erklärt wurden",
+    avatarComplaintType: "Vertrauensbruch",
+  },
+  {
+    avatarComplaintTopic: "Widersprüchliche Aussagen von verschiedenen Ansprechpartnern",
+    avatarComplaintContext:
+      "mehrere Ansprechpartner geben unterschiedliche Auskünfte zum selben Vorgang",
+    avatarComplaintType: "Zuständigkeitschaos",
+  },
+  {
+    avatarComplaintTopic: "Anpassung/Änderung wurde nicht umgesetzt",
+    avatarComplaintContext:
+      "beauftragte Vertrags- oder Policenanpassungen wurden nicht sauber umgesetzt",
+    avatarComplaintType: "Umsetzungsfehler",
+  },
+];
+
+const FINANCE_COMPLAINT_SEEDS: readonly ComplaintSeed[] =
+  FINANCE_COMPLAINT_SEED_INPUTS.map((seed) => ({
+    ...seed,
+    avatarComplaintGoal:
+      "eine verbindliche Klärung mit transparenter Begründung und konkretem nächsten Schritt",
+    avatarComplaintHistory:
+      "hat bereits nachgefasst, aber bislang nur Teilantworten oder wechselnde Aussagen erhalten",
+    avatarInnerAmplifiers: [
+      "verliert Vertrauen bei unklaren Kosten und fehlender Verbindlichkeit",
+      "will finanzielle Entscheidungen nachvollziehbar und revisionssicher treffen",
+    ],
+    avatarLifeContext:
+      "muss private und berufliche Finanzentscheidungen eng abgestimmt und planbar halten",
+    avatarMembershipContext:
+      "ist Bestandskunde und erwartet verlässliche Beratung sowie saubere Betreuung nach Vertragsabschluss",
+  }));
+
 function getComplaintSeedsForIndustry(industryKey: IndustryKey) {
   if (industryKey === "energy") {
     return ENERGY_COMPLAINT_SEEDS;
+  }
+
+  if (industryKey === "finance") {
+    return FINANCE_COMPLAINT_SEEDS;
   }
 
   return DEFAULT_COMPLAINT_SEEDS;

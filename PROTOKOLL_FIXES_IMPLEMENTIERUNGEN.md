@@ -172,3 +172,77 @@ Branch: `main`
 - Mehrere Fixes wurden jeweils mit lokalem Build validiert (`npm run build` erfolgreich nach den jeweiligen Änderungen).
 - Relevante Fix-Commits wurden direkt auf `main` gepusht.
 
+
+## 7) Dynamische Branchenlogik in Modulen
+
+### 7.1 Terminsetting: studio-lastige Texte zentral dynamisch normalisiert
+- Commit: `c789ab7`
+- Betroffene Dateien:
+  - `lib/chat-prompts.ts`
+- Änderung:
+  - Für `appointment_setting` wird der Branchenblock vor Auslieferung dynamisch normalisiert.
+  - Studio-Formulierungen werden für `finance`, `franchise`, `energy` automatisch auf branchenpassende Terminsetting-Texte umgeschrieben.
+  - `fitness` bleibt unverändert.
+
+### 7.2 Beschwerdemanagement: studio-lastige Texte zentral dynamisch normalisiert
+- Commit: `57f6b9e`
+- Betroffene Dateien:
+  - `lib/chat-prompts.ts`
+- Änderung:
+  - Für `complaint_management` wird der Branchenblock analog dynamisch normalisiert.
+  - Studio-Formulierungen werden bei Nicht-Fitness-Branchen automatisch in branchenspezifische Beschwerde-Formulierungen überführt.
+
+## 8) Beschwerdekanal-Reduktion
+
+### 8.1 Auswahl auf `Telefon` und `vor Ort` begrenzt
+- Commit: `57f6b9e`
+- Betroffene Dateien:
+  - `lib/training-session-config.ts`
+  - `app/dashboard/start-session-actions.tsx` (indirekt über Optionsquelle)
+- Änderung:
+  - `Empfang / Theke` aus den erlaubten Complaint-Kanaloptionen entfernt.
+  - UI nutzt automatisch nur noch die verbleibenden Optionen aus `COMPLAINT_CHANNEL_OPTIONS`.
+
+### 8.2 Abwärtskompatibilität für alte Snapshots mit `Empfang / Theke`
+- Commit: `57f6b9e`
+- Betroffene Dateien:
+  - `app/api/chat/route.ts`
+- Änderung:
+  - Alte Snapshot-Werte `Empfang / Theke` werden beim Mapping auf `vor Ort` normalisiert.
+  - Verhindert Fehler bei bestehenden historischen Datensätzen.
+
+## 9) Energy-Beschwerdemanagement: Kontextkatalog & Branchenrouting
+
+### 9.1 Ursache für falschen (Fitness-)Beschwerdekontext beseitigt
+- Commit: `bff1e91`
+- Betroffene Dateien:
+  - `lib/complaint-avatar.ts`
+  - `app/api/sessions/start/route.ts`
+  - `app/api/chat/route.ts`
+- Änderung:
+  - Complaint-Avatar-Auswahl ist jetzt explizit `industryKey`-abhängig.
+  - Bisherige universelle/studio-lastige Seeds sind als Default-Fallback erhalten, aber `energy` nutzt einen separaten Katalog.
+
+### 9.2 Vollständiger Energy-Beschwerdekatalog hinterlegt
+- Commit: `bff1e91`
+- Betroffene Dateien:
+  - `lib/complaint-avatar.ts`
+- Änderung:
+  - Energie-spezifische Beschwerdefälle als strukturierter Seed-Katalog ergänzt, inkl.:
+    - Verbrauch/Kosten: PV-Ertrag, Wärmepumpenverbrauch, Nachzahlungen, Finanzierung, Einspartransparenz.
+    - Technik/Betrieb: Speicher, Wechselrichter, Notstrom, App/Monitoring, Systemintegration.
+    - Umsetzung/Service: Förderlogik, Installateur-Kommunikation, Wartezeiten, Baustellenschäden.
+    - Gebäude/Komfort: Wärmeverteilung, Warmwasser, Lärm, Feuchtigkeit/Schimmel.
+    - Gewerbe-Schmerzpunkte: Lastmanagement, Peak-Shaving, Leistung für Maschinen/Fuhrpark, Produktionsausfälle, Brandschutz/Versicherung, Amortisation, Bedienkomplexität.
+  - Selections werden daraus zufällig gezogen, kombiniert mit Difficulty/DISC-Profil und Verlaufskontext.
+
+## 10) Projektdokumentation im Root
+
+### 10.1 Protokolldatei angelegt und fortlaufend erweitert
+- Commits:
+  - `c789ab7` (Anlage)
+  - laufende inhaltliche Ergänzungen
+- Betroffene Dateien:
+  - `PROTOKOLL_FIXES_IMPLEMENTIERUNGEN.md`
+- Änderung:
+  - Zentrale Nachverfolgbarkeit der Implementierungen inkl. Commits, Dateiliste und Änderungstyp.
