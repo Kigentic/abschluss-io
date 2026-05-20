@@ -84,6 +84,17 @@ export function normalizeIndustryKey(value: string | null | undefined): Industry
     return DEFAULT_INDUSTRY_KEY;
   }
 
+  // Legacy aliases for environments that still contain pre-migration values.
+  if (value === "automotive") {
+    return "franchise";
+  }
+  if (value === "insurance") {
+    return "finance";
+  }
+  if (value === "physio") {
+    return "fitness";
+  }
+
   return isIndustryKey(value) ? value : DEFAULT_INDUSTRY_KEY;
 }
 
@@ -122,7 +133,7 @@ export async function getOrganizationIndustrySettings(
 
   const { data, error } = await supabase
     .from("organizations")
-    .select("industry_key, prompt_profile_key, industry_locked")
+    .select("industry_key, prompt_profile_key, industry_locked, franchise_vertical")
     .eq("id", organizationId)
     .maybeSingle<OrganizationIndustrySettings>();
 

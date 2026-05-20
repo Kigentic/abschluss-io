@@ -23,6 +23,19 @@ type PatchRequestBody = {
   promptProfileKey?: string | null;
 };
 
+function toLegacyIndustryKey(industryKey: string) {
+  if (industryKey === "franchise") {
+    return "automotive";
+  }
+  if (industryKey === "finance") {
+    return "insurance";
+  }
+  if (industryKey === "fitness") {
+    return "physio";
+  }
+  return industryKey;
+}
+
 export async function DELETE(
   request: Request,
   context: { params: Promise<{ organizationId: string }> }
@@ -259,6 +272,30 @@ export async function PATCH(
             franchise_vertical: null,
           }
         : null;
+    }
+
+    if (
+      updateError?.message?.includes("organizations_industry_key_check") &&
+      typeof updatePayload.industry_key === "string"
+    ) {
+      const legacyIndustryKey = toLegacyIndustryKey(updatePayload.industry_key);
+
+      if (legacyIndustryKey !== updatePayload.industry_key) {
+        const legacyPayload = {
+          ...updatePayload,
+          industry_key: legacyIndustryKey,
+        };
+
+        const legacyUpdateResult = await adminAuth.serviceRoleClient
+          .from("organizations")
+          .update(legacyPayload)
+          .eq("id", organizationId)
+          .select("id, industry_key, prompt_profile_key, industry_locked, franchise_vertical")
+          .single<OrganizationRecord>();
+
+        updateError = legacyUpdateResult.error;
+        updatedOrganization = legacyUpdateResult.data;
+      }
     }
 
     if (updateError) {
