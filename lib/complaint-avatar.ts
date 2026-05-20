@@ -216,52 +216,334 @@ type FinanceComplaintSeedInput = {
 
 const FINANCE_COMPLAINT_SEED_INPUTS: readonly FinanceComplaintSeedInput[] = [
   {
-    avatarComplaintTopic: "Unklare Vertragskosten",
+    avatarComplaintTopic: "Versicherungsbeitrag plötzlich deutlich erhöht",
     avatarComplaintContext:
-      "im Vertrag tauchen Kostenpositionen auf, die im Gespräch so nicht klar erklärt wurden",
-    avatarComplaintType: "Kostentransparenzproblem",
+      "der Versicherungsbeitrag wurde ohne nachvollziehbare Begründung massiv erhöht",
+    avatarComplaintType: "Beitrags- und Transparenzproblem",
   },
   {
-    avatarComplaintTopic: "Leistungsfall zieht sich ohne klare Rückmeldung",
+    avatarComplaintTopic: "Schadensfall nur teilweise übernommen",
     avatarComplaintContext:
-      "im Leistungsfall fehlen verbindliche Aussagen zu Status, Fristen und nächsten Schritten",
+      "im Schadensfall wurde nur ein Teil der erwarteten Leistung übernommen",
+    avatarComplaintType: "Leistungsabweichung",
+  },
+  {
+    avatarComplaintTopic: "Lange Wartezeit bis zur Auszahlung",
+    avatarComplaintContext:
+      "die Auszahlung im Leistungsfall verzögert sich stark ohne klare Terminangabe",
     avatarComplaintType: "Serviceverzug",
   },
   {
-    avatarComplaintTopic: "Unterlagen fehlerhaft oder unvollständig",
+    avatarComplaintTopic: "Berater hat wichtige Kosten verschwiegen",
     avatarComplaintContext:
-      "eingereichte Unterlagen sind fehlerhaft erfasst oder es fehlen wichtige Dokumente",
-    avatarComplaintType: "Prozessfehler",
-  },
-  {
-    avatarComplaintTopic: "Rückruf zugesagt, aber mehrfach nicht erfolgt",
-    avatarComplaintContext:
-      "mehrfach zugesagte Rückrufe sind ausgeblieben und der Fall bleibt ungelöst",
-    avatarComplaintType: "Kommunikationsproblem",
-  },
-  {
-    avatarComplaintTopic: "Beratungsergebnis passt nicht zur Lebenssituation",
-    avatarComplaintContext:
-      "die vorgeschlagene Lösung wirkt nicht passend zur aktuellen familiären und finanziellen Situation",
-    avatarComplaintType: "Beratungsfehlpassung",
-  },
-  {
-    avatarComplaintTopic: "Beitragserhöhung ohne nachvollziehbare Erklärung",
-    avatarComplaintContext:
-      "Beiträge sind gestiegen, ohne dass die Gründe transparent und verständlich erklärt wurden",
+      "relevante Kosten wurden im Verkaufsgespräch nicht transparent dargestellt",
     avatarComplaintType: "Vertrauensbruch",
   },
   {
-    avatarComplaintTopic: "Widersprüchliche Aussagen von verschiedenen Ansprechpartnern",
+    avatarComplaintTopic: "Kreditrate steigt unerwartet durch Zinsanpassung",
     avatarComplaintContext:
-      "mehrere Ansprechpartner geben unterschiedliche Auskünfte zum selben Vorgang",
+      "die monatliche Kreditrate steigt deutlich stärker als zuvor dargestellt",
+    avatarComplaintType: "Finanzierungsrisiko",
+  },
+  {
+    avatarComplaintTopic: "Schlechte Erreichbarkeit nach Vertragsabschluss",
+    avatarComplaintContext:
+      "nach Vertragsabschluss sind Ansprechpartner kaum erreichbar und Rückmeldungen fehlen",
+    avatarComplaintType: "Betreuungsdefizit",
+  },
+  {
+    avatarComplaintTopic: "Leistungen entsprechen nicht dem Verkaufsgespräch",
+    avatarComplaintContext:
+      "die tatsächlichen Leistungen weichen klar von den Verkaufszusagen ab",
+    avatarComplaintType: "Leistungsversprechen verfehlt",
+  },
+  {
+    avatarComplaintTopic: "Zu hohe Abschluss- oder Bearbeitungsgebühren",
+    avatarComplaintContext:
+      "die berechneten Abschluss- oder Bearbeitungsgebühren sind unerwartet hoch",
+    avatarComplaintType: "Gebührenproblem",
+  },
+  {
+    avatarComplaintTopic: "Kündigung oder Tarifwechsel extrem kompliziert",
+    avatarComplaintContext:
+      "Kündigung und Tarifwechsel sind unnötig kompliziert und intransparent",
+    avatarComplaintType: "Prozesshürde",
+  },
+  {
+    avatarComplaintTopic: "Versicherung lehnt Schaden wegen Kleingedrucktem ab",
+    avatarComplaintContext:
+      "ein Schaden wird aufgrund schwer nachvollziehbarer Klauseln abgelehnt",
+    avatarComplaintType: "Klauselkonflikt",
+  },
+  {
+    avatarComplaintTopic: "Doppelversicherungen verkauft",
+    avatarComplaintContext:
+      "es wurden überlappende Versicherungen verkauft, die keinen Zusatznutzen bringen",
+    avatarComplaintType: "Over-Selling",
+  },
+  {
+    avatarComplaintTopic: "Falsche oder unvollständige Bedarfsanalyse",
+    avatarComplaintContext:
+      "die Bedarfsanalyse war unvollständig und führte zu unpassenden Produkten",
+    avatarComplaintType: "Beratungsfehler",
+  },
+  {
+    avatarComplaintTopic: "Zu teurer Strom- oder Gastarif vermittelt",
+    avatarComplaintContext:
+      "der vermittelte Strom- oder Gastarif ist deutlich teurer als vergleichbare Optionen",
+    avatarComplaintType: "Tariffehlberatung",
+  },
+  {
+    avatarComplaintTopic: "Bonuszahlungen aus Stromvertrag nie erhalten",
+    avatarComplaintContext:
+      "zugesagte Bonuszahlungen aus dem Stromvertrag wurden nicht ausgezahlt",
+    avatarComplaintType: "Bonuskonflikt",
+  },
+  {
+    avatarComplaintTopic: "PKV-Beiträge steigen jedes Jahr massiv",
+    avatarComplaintContext:
+      "die PKV-Beiträge steigen jährlich stark ohne tragfähige Entlastungsstrategie",
+    avatarComplaintType: "Langfristkostenproblem",
+  },
+  {
+    avatarComplaintTopic: "Zahnzusatzversicherung zahlt viel weniger als erwartet",
+    avatarComplaintContext:
+      "die Zahnzusatzversicherung übernimmt deutlich weniger als im Verkauf suggeriert",
+    avatarComplaintType: "Leistungsenttäuschung",
+  },
+  {
+    avatarComplaintTopic: "Restschuldversicherung unnötig mitverkauft",
+    avatarComplaintContext:
+      "eine Restschuldversicherung wurde ohne klaren Bedarf mitverkauft",
+    avatarComplaintType: "Bedarfsferner Zusatzverkauf",
+  },
+  {
+    avatarComplaintTopic: "Finanzierung enthält versteckte Zusatzkosten",
+    avatarComplaintContext:
+      "in der Finanzierung tauchen versteckte Nebenkosten auf, die vorher nicht klar waren",
+    avatarComplaintType: "Kostentransparenzproblem",
+  },
+  {
+    avatarComplaintTopic: "Leasingvertrag deutlich teurer als angekündigt",
+    avatarComplaintContext:
+      "der Leasingvertrag ist insgesamt deutlich teurer als im Beratungsgespräch angekündigt",
+    avatarComplaintType: "Kalkulationsabweichung",
+  },
+  {
+    avatarComplaintTopic: "Vertragsunterlagen schwer verständlich oder irreführend",
+    avatarComplaintContext:
+      "die Vertragsunterlagen sind schwer verständlich und teilweise irreführend formuliert",
+    avatarComplaintType: "Dokumentationsproblem",
+  },
+  {
+    avatarComplaintTopic: "Im Schadensfall fühlt sich niemand zuständig",
+    avatarComplaintContext:
+      "im Schadensfall übernimmt niemand klar die Verantwortung für den Fall",
     avatarComplaintType: "Zuständigkeitschaos",
   },
   {
-    avatarComplaintTopic: "Anpassung/Änderung wurde nicht umgesetzt",
+    avatarComplaintTopic: "Hohe Selbstbeteiligung wurde vorher nicht erklärt",
     avatarComplaintContext:
-      "beauftragte Vertrags- oder Policenanpassungen wurden nicht sauber umgesetzt",
-    avatarComplaintType: "Umsetzungsfehler",
+      "die hohe Selbstbeteiligung wurde vor Vertragsabschluss nicht transparent erklärt",
+    avatarComplaintType: "Aufklärungsdefizit",
+  },
+  {
+    avatarComplaintTopic: "Falsche Laufzeit oder Tilgung empfohlen",
+    avatarComplaintContext:
+      "die empfohlene Laufzeit oder Tilgungsstruktur passt nicht zur finanziellen Realität",
+    avatarComplaintType: "Finanzierungsfehlpassung",
+  },
+  {
+    avatarComplaintTopic: "Schlechte Beratung zur Altersvorsorge",
+    avatarComplaintContext:
+      "die Altersvorsorgeberatung war oberflächlich und nicht auf die Ziele abgestimmt",
+    avatarComplaintType: "Strategiemangel",
+  },
+  {
+    avatarComplaintTopic: "Hohe Vorfälligkeitsentschädigung beim Kredit",
+    avatarComplaintContext:
+      "die Vorfälligkeitsentschädigung beim Kredit wurde nicht verständlich vorab erklärt",
+    avatarComplaintType: "Konditionsproblem",
+  },
+  {
+    avatarComplaintTopic: "Leistungen der Berufsunfähigkeitsversicherung greifen nicht",
+    avatarComplaintContext:
+      "im Leistungsfall der BU greifen zugesagte Leistungen nicht wie erwartet",
+    avatarComplaintType: "Leistungslücke",
+  },
+  {
+    avatarComplaintTopic: "Tarif passt nicht zur Lebenssituation des Kunden",
+    avatarComplaintContext:
+      "der gewählte Tarif passt nicht zur aktuellen Lebens- und Einkommenssituation",
+    avatarComplaintType: "Tariffehlpassung",
+  },
+  {
+    avatarComplaintTopic: "Nach Vertragsabschluss kaum Betreuung oder Service",
+    avatarComplaintContext:
+      "nach Abschluss fehlt eine verlässliche Betreuung bei Rückfragen und Anpassungen",
+    avatarComplaintType: "After-Sales-Defizit",
+  },
+  {
+    avatarComplaintTopic: "Vergleichsangebote wurden bewusst nicht gezeigt",
+    avatarComplaintContext:
+      "relevante Vergleichsangebote wurden im Beratungsprozess nicht transparent offengelegt",
+    avatarComplaintType: "Intransparente Beratung",
+  },
+  {
+    avatarComplaintTopic: "Kunde zahlt seit Jahren zu viel ohne Optimierung",
+    avatarComplaintContext:
+      "bestehende Verträge wurden lange nicht optimiert und verursachen laufend Mehrkosten",
+    avatarComplaintType: "Optimierungsversäumnis",
+  },
+  {
+    avatarComplaintTopic: "Versicherung kündigt nach Schadensfall den Vertrag",
+    avatarComplaintContext:
+      "nach einem Schadensfall wurde der Vertrag überraschend gekündigt",
+    avatarComplaintType: "Vertragsstabilitätsproblem",
+  },
+  {
+    avatarComplaintTopic: "Stromanbieter lockt mit Billigpreis und erhöht später massiv",
+    avatarComplaintContext:
+      "ein vermeintlicher Billigtarif wurde nach kurzer Zeit stark verteuert",
+    avatarComplaintType: "Preislockproblem",
+  },
+  {
+    avatarComplaintTopic: "Kredit unnötig teuer trotz besserer Alternativen",
+    avatarComplaintContext:
+      "der abgeschlossene Kredit ist unnötig teuer, obwohl bessere Alternativen verfügbar waren",
+    avatarComplaintType: "Beratungsvorteil nicht genutzt",
+  },
+  {
+    avatarComplaintTopic: "Finanzberater verkauft provisionsgetrieben statt bedarfsorientiert",
+    avatarComplaintContext:
+      "die Produktempfehlung wirkt provisionsgetrieben statt am Bedarf orientiert",
+    avatarComplaintType: "Interessenkonflikt",
+  },
+  {
+    avatarComplaintTopic: "Rückrufversprechen werden nie eingehalten",
+    avatarComplaintContext:
+      "zugesagte Rückrufe werden wiederholt nicht eingehalten",
+    avatarComplaintType: "Kommunikationsproblem",
+  },
+  {
+    avatarComplaintTopic: "Falsche Angaben im Antrag sorgen später für Probleme",
+    avatarComplaintContext:
+      "falsche oder unvollständige Antragsdaten führen im Nachgang zu Leistungsproblemen",
+    avatarComplaintType: "Antragsfehler",
+  },
+  {
+    avatarComplaintTopic: "Digitale Kundenportale funktionieren nicht richtig",
+    avatarComplaintContext:
+      "digitale Portale zeigen Fehler, unvollständige Daten oder blockieren Prozesse",
+    avatarComplaintType: "Digitaler Servicefehler",
+  },
+  {
+    avatarComplaintTopic: "Vertragswechsel verursacht Versorgungslücken",
+    avatarComplaintContext:
+      "durch den Vertragswechsel sind temporäre Versorgungslücken entstanden",
+    avatarComplaintType: "Wechselprozess-Fehler",
+  },
+  {
+    avatarComplaintTopic: "Kunde versteht seine Verträge trotz Beratung nicht",
+    avatarComplaintContext:
+      "trotz Beratung bleiben zentrale Vertragsinhalte unverständlich",
+    avatarComplaintType: "Verständnisdefizit",
+  },
+  {
+    avatarComplaintTopic: "Zu viele Produkte gleichzeitig verkauft (Over-Selling)",
+    avatarComplaintContext:
+      "es wurden zu viele Produkte gleichzeitig verkauft, ohne klare Priorisierung",
+    avatarComplaintType: "Over-Selling",
+  },
+  {
+    avatarComplaintTopic: "Fonds entwickeln sich deutlich schlechter als versprochen",
+    avatarComplaintContext:
+      "die Fondsentwicklung liegt klar unter den im Verkauf kommunizierten Erwartungen",
+    avatarComplaintType: "Performanceabweichung",
+  },
+  {
+    avatarComplaintTopic: "Hohe Gebühren fressen die Rendite auf",
+    avatarComplaintContext:
+      "laufende Kosten und Gebühren reduzieren die Rendite deutlich stärker als erwartet",
+    avatarComplaintType: "Kosten-Rendite-Konflikt",
+  },
+  {
+    avatarComplaintTopic: "Risiko der Geldanlage wurde falsch eingeschätzt",
+    avatarComplaintContext:
+      "das tatsächliche Risiko der Anlage wurde im Beratungsprozess zu niedrig dargestellt",
+    avatarComplaintType: "Risikofehlbewertung",
+  },
+  {
+    avatarComplaintTopic: "Kunde versteht das Investmentprodukt nicht richtig",
+    avatarComplaintContext:
+      "das Investmentprodukt wurde nicht so erklärt, dass Chancen und Risiken klar verstanden sind",
+    avatarComplaintType: "Produktverständnislücke",
+  },
+  {
+    avatarComplaintTopic: "Verluste werden heruntergespielt oder schön geredet",
+    avatarComplaintContext:
+      "Verluste in der Anlage werden verharmlost statt ehrlich aufgearbeitet",
+    avatarComplaintType: "Kommunikations- und Vertrauensproblem",
+  },
+  {
+    avatarComplaintTopic: "Zu riskante Produkte für die Lebenssituation empfohlen",
+    avatarComplaintContext:
+      "die empfohlenen Produkte sind für Alter, Ziele und Risikoprofil zu aggressiv",
+    avatarComplaintType: "Suitability-Verstoß",
+  },
+  {
+    avatarComplaintTopic: "Berater meldet sich nur beim Verkauf neuer Produkte",
+    avatarComplaintContext:
+      "laufende Betreuung fehlt, Kontakt erfolgt nur bei neuen Verkaufsanlässen",
+    avatarComplaintType: "Betreuungslücke",
+  },
+  {
+    avatarComplaintTopic: "Depot ist schlecht diversifiziert",
+    avatarComplaintContext:
+      "das Depot ist unzureichend diversifiziert und konzentriert Klumpenrisiken",
+    avatarComplaintType: "Portfoliostrukturproblem",
+  },
+  {
+    avatarComplaintTopic: "Hohe Ausgabeaufschläge wurden verschwiegen",
+    avatarComplaintContext:
+      "Ausgabeaufschläge wurden vor Abschluss nicht transparent kommuniziert",
+    avatarComplaintType: "Gebührentransparenzproblem",
+  },
+  {
+    avatarComplaintTopic: "Investmentstrategie wird ständig geändert",
+    avatarComplaintContext:
+      "die Strategie wird ohne klare Logik laufend geändert und wirkt inkonsistent",
+    avatarComplaintType: "Strategieinstabilität",
+  },
+  {
+    avatarComplaintTopic: "Anleger fühlt sich bei Kurseinbrüchen allein gelassen",
+    avatarComplaintContext:
+      "bei Kurseinbrüchen fehlt proaktive Einordnung und klare Handlungsführung",
+    avatarComplaintType: "Krisenkommunikationsdefizit",
+  },
+  {
+    avatarComplaintTopic: "Zu viele aktive Fonds statt günstiger ETF-Lösungen verkauft",
+    avatarComplaintContext:
+      "es wurden kostenintensive aktive Fonds statt naheliegender ETF-Lösungen empfohlen",
+    avatarComplaintType: "Kostenineffiziente Produktwahl",
+  },
+  {
+    avatarComplaintTopic: "Versprochene Renditen wurden nie erreicht",
+    avatarComplaintContext:
+      "in Aussicht gestellte Renditeziele wurden über längere Zeit klar verfehlt",
+    avatarComplaintType: "Renditeversprechen verfehlt",
+  },
+  {
+    avatarComplaintTopic: "Steuerliche Nachteile wurden nicht erklärt",
+    avatarComplaintContext:
+      "steuerliche Nachteile und Folgen wurden vor Abschluss nicht verständlich erläutert",
+    avatarComplaintType: "Steueraufklärungsdefizit",
+  },
+  {
+    avatarComplaintTopic: "Anlageberatung wirkt eher wie Verkauf statt echte Strategie",
+    avatarComplaintContext:
+      "die Anlageberatung wirkt produktgetrieben statt strategisch und zielorientiert",
+    avatarComplaintType: "Strategie- statt Verkaufsanspruch verfehlt",
   },
 ];
 
