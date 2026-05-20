@@ -52,7 +52,6 @@ type RequestBody = {
 type OrganizationMembership = {
   organization_id: string;
   organizations: {
-    franchise_vertical: string | null;
     industry_key: string | null;
     industry_locked: boolean | null;
     prompt_profile_key: string | null;
@@ -385,7 +384,7 @@ export async function POST(request: Request) {
     const { data: membership, error: membershipError } = await supabase
       .from("organization_members")
       .select(
-        "organization_id, organizations(industry_key, prompt_profile_key, industry_locked, franchise_vertical)"
+        "organization_id, organizations(industry_key, prompt_profile_key, industry_locked)"
       )
       .eq("user_id", userId)
       .limit(1)

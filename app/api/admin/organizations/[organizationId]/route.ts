@@ -108,12 +108,34 @@ export async function PATCH(
     const { franchiseVertical, industryKey, industryLocked, promptProfileKey } =
       (await request.json()) as PatchRequestBody;
 
-    const { data: organization, error: organizationError } =
-      await adminAuth.serviceRoleClient
+    let organization: OrganizationRecord | null = null;
+    const organizationQueryWithVertical = await adminAuth.serviceRoleClient
+      .from("organizations")
+      .select("id, industry_key, prompt_profile_key, industry_locked, franchise_vertical")
+      .eq("id", organizationId)
+      .maybeSingle<OrganizationRecord>();
+    let organizationError = organizationQueryWithVertical.error;
+    organization = organizationQueryWithVertical.data;
+
+    if (organizationError?.message?.includes("franchise_vertical")) {
+      const fallbackQuery = await adminAuth.serviceRoleClient
         .from("organizations")
-        .select("id, industry_key, prompt_profile_key, industry_locked, franchise_vertical")
+        .select("id, industry_key, prompt_profile_key, industry_locked")
         .eq("id", organizationId)
-        .maybeSingle<OrganizationRecord>();
+        .maybeSingle<{
+          id: string;
+          industry_key: string | null;
+          industry_locked: boolean | null;
+          prompt_profile_key: string | null;
+        }>();
+      organizationError = fallbackQuery.error;
+      organization = fallbackQuery.data
+        ? {
+            ...fallbackQuery.data,
+            franchise_vertical: null,
+          }
+        : null;
+    }
 
     if (organizationError) {
       return NextResponse.json(
@@ -203,17 +225,52 @@ export async function PATCH(
       });
     }
 
-    const { data: updatedOrganization, error: updateError } =
-      await adminAuth.serviceRoleClient
+    let updatedOrganization: OrganizationRecord | null = null;
+    let updateError: { message: string } | null = null;
+
+    const updateResultWithVertical = await adminAuth.serviceRoleClient
+      .from("organizations")
+      .update(updatePayload)
+      .eq("id", organizationId)
+      .select("id, industry_key, prompt_profile_key, industry_locked, franchise_vertical")
+      .single<OrganizationRecord>();
+
+    updateError = updateResultWithVertical.error;
+    updatedOrganization = updateResultWithVertical.data;
+
+    if (updateError?.message?.includes("franchise_vertical")) {
+      const { franchise_vertical: _ignored, ...fallbackPayload } = updatePayload;
+      const updateFallbackResult = await adminAuth.serviceRoleClient
         .from("organizations")
-        .update(updatePayload)
+        .update(fallbackPayload)
         .eq("id", organizationId)
-        .select("id, industry_key, prompt_profile_key, industry_locked, franchise_vertical")
-        .single<OrganizationRecord>();
+        .select("id, industry_key, prompt_profile_key, industry_locked")
+        .single<{
+          id: string;
+          industry_key: string | null;
+          industry_locked: boolean | null;
+          prompt_profile_key: string | null;
+        }>();
+
+      updateError = updateFallbackResult.error;
+      updatedOrganization = updateFallbackResult.data
+        ? {
+            ...updateFallbackResult.data,
+            franchise_vertical: null,
+          }
+        : null;
+    }
 
     if (updateError) {
       return NextResponse.json(
         { error: updateError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!updatedOrganization) {
+      return NextResponse.json(
+        { error: "Organisation konnte nicht aktualisiert werden." },
         { status: 500 }
       );
     }

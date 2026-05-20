@@ -122,7 +122,7 @@ export async function getOrganizationIndustrySettings(
 
   const { data, error } = await supabase
     .from("organizations")
-    .select("industry_key, prompt_profile_key, industry_locked, franchise_vertical")
+    .select("industry_key, prompt_profile_key, industry_locked")
     .eq("id", organizationId)
     .maybeSingle<OrganizationIndustrySettings>();
 

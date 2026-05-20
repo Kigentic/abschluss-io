@@ -19,7 +19,6 @@ import {
 
 type OrganizationRecord = {
   created_at: string;
-  franchise_vertical: string | null;
   id: string;
   industry_key: string | null;
   industry_locked: boolean | null;
@@ -233,7 +232,7 @@ export async function GET(request: Request) {
       serviceRoleClient
         .from("organizations")
         .select(
-          "id, organization_name, seat_limit, is_active, created_at, industry_key, prompt_profile_key, industry_locked, franchise_vertical"
+          "id, organization_name, seat_limit, is_active, created_at, industry_key, prompt_profile_key, industry_locked"
         )
         .order("organization_name", { ascending: true }),
       serviceRoleClient
