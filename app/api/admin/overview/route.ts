@@ -232,7 +232,7 @@ export async function GET(request: Request) {
       serviceRoleClient
         .from("organizations")
         .select(
-          "id, organization_name, seat_limit, is_active, created_at, industry_key, prompt_profile_key, industry_locked"
+          "id, organization_name, seat_limit, is_active, created_at, industry_key, prompt_profile_key, industry_locked, franchise_vertical"
         )
         .order("organization_name", { ascending: true }),
       serviceRoleClient

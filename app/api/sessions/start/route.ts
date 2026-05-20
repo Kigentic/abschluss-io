@@ -384,7 +384,7 @@ export async function POST(request: Request) {
     const { data: membership, error: membershipError } = await supabase
       .from("organization_members")
       .select(
-        "organization_id, organizations(industry_key, prompt_profile_key, industry_locked)"
+        "organization_id, organizations(industry_key, prompt_profile_key, industry_locked, franchise_vertical)"
       )
       .eq("user_id", userId)
       .limit(1)

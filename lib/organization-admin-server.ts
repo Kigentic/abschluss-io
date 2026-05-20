@@ -139,7 +139,7 @@ export async function requireOrganizationAdmin(
   const membershipQuery = supabase
     .from("organization_members")
     .select(
-      "organization_id, role_in_org, organizations!inner(id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked)"
+      "organization_id, role_in_org, organizations!inner(id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked, franchise_vertical)"
     )
     .eq("user_id", user.id);
 
@@ -169,7 +169,7 @@ export async function requireOrganizationAdmin(
       await serviceRoleClient
         .from("organizations")
         .select(
-          "id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked"
+          "id, organization_name, seat_limit, is_active, industry_key, prompt_profile_key, industry_locked, franchise_vertical"
         )
         .eq("is_active", true)
         .order("created_at", { ascending: false })

@@ -349,3 +349,20 @@ Branch: `main`
   - Kritische Selects wieder ohne harte Spaltenabhängigkeit formuliert.
   - Update-Route mit Fallback-Retry (ohne `franchise_vertical`) ergänzt.
   - Ergebnis: Admin/Organisation laden wieder, selbst wenn die Spalte in der Ziel-DB noch fehlt.
+
+## 14) Franchise-Segment speichert wieder korrekt
+
+### 14.1 Ursache: `franchise_vertical` in mehreren Reads nicht mehr geladen
+- Commit: `tbd`
+- Betroffene Dateien:
+  - `app/api/admin/overview/route.ts`
+  - `lib/organization-admin-server.ts`
+  - `app/api/sessions/start/route.ts`
+- Änderung:
+  - Nach dem Kompatibilitäts-Hotfix war die Spalte `franchise_vertical` zwar in der DB vorhanden, wurde aber in zentralen Selects nicht mehr mitgeladen.
+  - Dadurch wirkte die Auswahl im Admin-Dropdown nach Reload wie „nicht gespeichert“.
+  - Alle relevanten Selects wurden wieder auf `franchise_vertical` erweitert:
+    - Plattform-Overview
+    - Organisations-Guard/Membership-Fallback
+    - Session-Start (Industry-Settings-Auflösung)
+  - Ergebnis: Umstellung z. B. auf `Franchise + Beauty` wird wieder konsistent gespeichert und angezeigt.
