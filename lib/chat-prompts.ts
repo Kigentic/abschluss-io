@@ -24,6 +24,49 @@ type GetSystemPromptParams = {
   sessionType: StoredSessionType;
 };
 
+function getIndustryAppointmentContextLabel(industryKey: IndustryKey) {
+  switch (industryKey) {
+    case "energy":
+      return "Energieberatung / Energievertrieb";
+    case "finance":
+      return "Finanzberatung / Vorsorge / Absicherung";
+    case "franchise":
+      return "Franchise-Beratung / Partnergewinnung";
+    case "fitness":
+    default:
+      return "Fitness / Boutique Studio";
+  }
+}
+
+function normalizeAppointmentSettingBlockForIndustry(
+  block: string,
+  industryKey: IndustryKey
+) {
+  if (industryKey === "fitness") {
+    return block;
+  }
+
+  const contextLabel = getIndustryAppointmentContextLabel(industryKey);
+
+  return block
+    .replace(
+      /Telefontraining in Studio-\/Lead-Setting:/giu,
+      `Telefontraining in ${contextLabel}:`
+    )
+    .replace(
+      /Dieses Modul bleibt bewusst ein Fitness-\/Boutique-Studio-Terminsetting-Call\./giu,
+      "Dieses Modul bleibt bewusst ein branchenspezifischer Terminsetting-Call."
+    )
+    .replace(
+      /optional mit Probetraining/giu,
+      "optional mit branchenspezifischem Erstgespräch"
+    )
+    .replace(
+      /Keine studio-spezifischen USPs voraussetzen\./giu,
+      "Keine studio-spezifischen oder branchenfremden USPs voraussetzen."
+    );
+}
+
 export function getSystemPrompt({
   appointmentAvatarContext,
   complaintAvatarContext,
@@ -41,7 +84,10 @@ export function getSystemPrompt({
     case "appointment_setting":
       promptParts.push(
         BASE_APPOINTMENT_SETTING_PROMPT,
-        industryConfig.blocks.appointmentSetting
+        normalizeAppointmentSettingBlockForIndustry(
+          industryConfig.blocks.appointmentSetting,
+          industryKey
+        )
       );
       if (appointmentAvatarContext) {
         promptParts.push(buildAppointmentAvatarPrompt(appointmentAvatarContext));
