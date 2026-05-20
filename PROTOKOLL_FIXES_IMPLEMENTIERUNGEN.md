@@ -288,3 +288,64 @@ Branch: `main`
     3) Eignung/Suitability
     4) Verbindlichkeit im Prozess
   - Opening für Situationscoaching konkretisiert (Kundentyp, Produkt/Thema, kritischer Moment, Einwand, Ziel).
+
+## 12) Franchise-Doppel-Logik (Hauptbranche + Subbranche)
+
+### 12.1 Architektur: `franchise_vertical` als zweite Ebene eingeführt
+- Commit: `50b7e77`
+- Betroffene Dateien:
+  - `lib/industries.ts`
+  - `supabase/migrations/044_add_franchise_vertical_to_organizations.sql`
+- Änderung:
+  - Neue Subbranchenebene für Franchise ergänzt (`restaurant`, `fashion`, `fitness`, `beauty`, `retail`, `services`, `other`).
+  - Normalizer/Labels/Options ergänzt.
+  - Migration für `organizations.franchise_vertical` inkl. Constraint und Default vorbereitet.
+
+### 12.2 Prompt-Overlay für Franchise-Subbranchen ergänzt
+- Commit: `50b7e77`
+- Betroffene Dateien:
+  - `lib/chat-prompts.ts`
+- Änderung:
+  - Bei `industryKey = franchise` wird ein zusätzlicher Subbranchen-Overlay in den Systemprompt aufgenommen.
+  - Vertikale Fokuslogik je Segment (z. B. Gastro, Fashion, Gym, Retail, Services) ergänzt.
+
+### 12.3 Avatar- und Session-Flow auf Subbranche verdrahtet
+- Commit: `50b7e77`
+- Betroffene Dateien:
+  - `lib/appointment-setting-avatar.ts`
+  - `lib/complaint-avatar.ts`
+  - `lib/full-sales-avatar.ts`
+  - `app/api/sessions/start/route.ts`
+  - `app/api/chat/route.ts`
+- Änderung:
+  - Terminsetting und Beschwerdemanagement nutzen bei Franchise zusätzliche vertikale Seeds.
+  - Full-Sales-Prompt um Franchise-Subbranchen-Verhaltensregeln ergänzt.
+  - `franchiseVertical` wird im Session-/Chat-Flow mitgeführt.
+
+### 12.4 Admin/API für Franchise-Segment-Auswahl erweitert
+- Commit: `50b7e77`
+- Betroffene Dateien:
+  - `app/admin/admin-page-view.tsx`
+  - `app/api/admin/organizations/[organizationId]/route.ts`
+  - `app/api/admin/overview/route.ts`
+  - `lib/organization-admin-server.ts`
+- Änderung:
+  - Admin kann für Franchise-Organisationen ein Segment per Dropdown setzen und speichern.
+  - API akzeptiert/validiert `franchiseVertical` und räumt Feld auf `null`, wenn Branche nicht `franchise` ist.
+  - Overview liefert Segmentinformationen zurück.
+
+## 13) Produktions-Hotfix nach Deploy
+
+### 13.1 Fehlerbild: `column organizations.franchise_vertical does not exist`
+- Commit: `da3bf7e`
+- Betroffene Dateien:
+  - `app/api/admin/organizations/[organizationId]/route.ts`
+  - `app/api/admin/overview/route.ts`
+  - `app/api/sessions/start/route.ts`
+  - `lib/industries.ts`
+  - `lib/organization-admin-server.ts`
+- Änderung:
+  - Kompatibilitäts-Hotfix eingebaut, damit produktive Umgebungen ohne bereits ausgeführte Migration weiter funktionieren.
+  - Kritische Selects wieder ohne harte Spaltenabhängigkeit formuliert.
+  - Update-Route mit Fallback-Retry (ohne `franchise_vertical`) ergänzt.
+  - Ergebnis: Admin/Organisation laden wieder, selbst wenn die Spalte in der Ziel-DB noch fehlt.
