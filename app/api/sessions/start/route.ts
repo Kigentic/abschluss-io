@@ -18,6 +18,7 @@ import {
   type FullSalesAvatarSnapshot,
 } from "@/lib/full-sales-avatar";
 import {
+  FRANCHISE_VERTICAL_LABELS,
   getOrganizationIndustrySettings,
   resolveIndustrySettings,
 } from "@/lib/industries";
@@ -269,6 +270,7 @@ function toBriefingValue(value: string | number | null | undefined) {
 function formatFullSalesBriefing(params: {
   avatarAge: number | null | undefined;
   avatarDifficulty: string | null | undefined;
+  franchiseVertical?: string | null | undefined;
   industryKey: string | null | undefined;
   avatarName: string | null | undefined;
   avatarPrimaryProblem: string | null | undefined;
@@ -277,25 +279,49 @@ function formatFullSalesBriefing(params: {
   const {
     avatarAge,
     avatarDifficulty,
+    franchiseVertical,
     industryKey,
     avatarName,
     avatarPrimaryProblem,
     avatarProfessionOrContext,
   } = params;
-  const primaryProblemLabel =
-    industryKey === "energy" ? "Konkretes Interesse" : "Beschwerdebild";
-
-  return [
+  const primaryProblemLabel = (() => {
+    if (industryKey === "energy") {
+      return "Konkretes Interesse";
+    }
+    if (industryKey === "franchise") {
+      return "Interessebild";
+    }
+    return "Beschwerdebild";
+  })();
+  const briefingLines = [
     "Kunden-Briefing",
     "",
     `Name: ${toBriefingValue(avatarName)}`,
     `Alter: ${toBriefingValue(avatarAge)}`,
     `Beruf: ${toBriefingValue(avatarProfessionOrContext)}`,
+  ];
+
+  if (industryKey === "franchise") {
+    const normalizedFranchiseVertical =
+      typeof franchiseVertical === "string" ? franchiseVertical.trim() : "";
+    const franchiseVerticalLabel =
+      FRANCHISE_VERTICAL_LABELS[
+        (normalizedFranchiseVertical in FRANCHISE_VERTICAL_LABELS
+          ? normalizedFranchiseVertical
+          : "other") as keyof typeof FRANCHISE_VERTICAL_LABELS
+      ];
+    briefingLines.push(`Franchise-Segment: ${franchiseVerticalLabel}`);
+  }
+
+  briefingLines.push(
     `${primaryProblemLabel}: ${toBriefingValue(avatarPrimaryProblem)}`,
     `Schwierigkeitslevel: ${toBriefingValue(avatarDifficulty)}`,
     "",
-    "Starte jetzt das Beratungsgespräch. Du eröffnest das Gespräch mit deiner ersten Nachricht.",
-  ].join("\n");
+    "Starte jetzt das Beratungsgespräch. Du eröffnest das Gespräch mit deiner ersten Nachricht."
+  );
+
+  return briefingLines.join("\n");
 }
 
 export async function POST(request: Request) {
@@ -623,6 +649,7 @@ export async function POST(request: Request) {
       const briefingMessage = formatFullSalesBriefing({
         avatarAge: selection.avatar.avatarAge,
         avatarDifficulty: selection.avatar.avatarDifficulty,
+        franchiseVertical: industrySettings.franchiseVertical,
         industryKey: industrySettings.industryKey,
         avatarName: selection.avatar.avatarName,
         avatarPrimaryProblem: selection.avatar.avatarPrimaryProblem,

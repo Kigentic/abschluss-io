@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { InternalAppShell } from "@/components/internal-app-shell";
 import { getWelcomeMessage } from "@/lib/chat-copy";
-import { normalizeIndustryKey } from "@/lib/industries";
+import { FRANCHISE_VERTICAL_LABELS, normalizeIndustryKey } from "@/lib/industries";
 import { parseStructuredSessionFeedback } from "@/lib/session-feedback";
 import { getSupabaseBrowserClient, hasSupabaseEnv } from "@/lib/supabase";
 import {
@@ -28,6 +28,7 @@ type ChatSession = {
   id: string;
   limit_reason: string | null;
   organizations: {
+    franchise_vertical?: string | null;
     industry_key: string | null;
   } | null;
   status: string;
@@ -84,28 +85,52 @@ function toBriefingValue(value: string | number | null | undefined) {
 function formatFullSalesBriefing(params: {
   avatarAge: number | null | undefined;
   avatarDifficulty: string | null | undefined;
+  franchiseVertical?: string | null | undefined;
   industryKey: string | null | undefined;
   avatarName: string | null | undefined;
   avatarPrimaryProblem: string | null | undefined;
   avatarProfessionOrContext: string | null | undefined;
 }) {
   const normalizedIndustryKey = normalizeIndustryKey(params.industryKey);
-  const primaryProblemLabel =
-    normalizedIndustryKey === "energy"
-      ? "Konkretes Interesse"
-      : "Beschwerdebild";
-
-  return [
+  const primaryProblemLabel = (() => {
+    if (normalizedIndustryKey === "energy") {
+      return "Konkretes Interesse";
+    }
+    if (normalizedIndustryKey === "franchise") {
+      return "Interessebild";
+    }
+    return "Beschwerdebild";
+  })();
+  const briefingLines = [
     "Kunden-Briefing",
     "",
     `Name: ${toBriefingValue(params.avatarName)}`,
     `Alter: ${toBriefingValue(params.avatarAge)}`,
     `Beruf: ${toBriefingValue(params.avatarProfessionOrContext)}`,
+  ];
+
+  if (normalizedIndustryKey === "franchise") {
+    const normalizedFranchiseVertical =
+      typeof params.franchiseVertical === "string"
+        ? params.franchiseVertical.trim()
+        : "";
+    const franchiseVerticalLabel =
+      FRANCHISE_VERTICAL_LABELS[
+        (normalizedFranchiseVertical in FRANCHISE_VERTICAL_LABELS
+          ? normalizedFranchiseVertical
+          : "other") as keyof typeof FRANCHISE_VERTICAL_LABELS
+      ];
+    briefingLines.push(`Franchise-Segment: ${franchiseVerticalLabel}`);
+  }
+
+  briefingLines.push(
     `${primaryProblemLabel}: ${toBriefingValue(params.avatarPrimaryProblem)}`,
     `Schwierigkeitslevel: ${toBriefingValue(params.avatarDifficulty)}`,
     "",
-    "Starte jetzt das Beratungsgespräch. Du eröffnest das Gespräch mit deiner ersten Nachricht.",
-  ].join("\n");
+    "Starte jetzt das Beratungsgespräch. Du eröffnest das Gespräch mit deiner ersten Nachricht."
+  );
+
+  return briefingLines.join("\n");
 }
 
 export function ChatSessionView({ sessionId }: ChatSessionViewProps) {
@@ -195,7 +220,7 @@ export function ChatSessionView({ sessionId }: ChatSessionViewProps) {
         const { data: session, error: sessionError } = await supabase
           .from("chat_sessions")
           .select(
-            "id, session_type, status, title, audio_seconds_used, usage_limit_reached, limit_reason, organizations(industry_key)"
+            "id, session_type, status, title, audio_seconds_used, usage_limit_reached, limit_reason, organizations(industry_key, franchise_vertical)"
           )
           .eq("id", sessionId)
           .eq("user_id", user.id)
@@ -241,6 +266,7 @@ export function ChatSessionView({ sessionId }: ChatSessionViewProps) {
             welcomeMessage = formatFullSalesBriefing({
               avatarAge: avatarSnapshot?.avatar_age,
               avatarDifficulty: avatarSnapshot?.avatar_difficulty,
+              franchiseVertical: session.organizations?.franchise_vertical,
               industryKey: session.organizations?.industry_key,
               avatarName: avatarSnapshot?.avatar_name,
               avatarPrimaryProblem: avatarSnapshot?.avatar_primary_problem,
@@ -381,7 +407,7 @@ export function ChatSessionView({ sessionId }: ChatSessionViewProps) {
       const { data: refreshedSession, error: refreshedSessionError } = await supabase
         .from("chat_sessions")
         .select(
-          "id, session_type, status, title, audio_seconds_used, usage_limit_reached, limit_reason, organizations(industry_key)"
+          "id, session_type, status, title, audio_seconds_used, usage_limit_reached, limit_reason, organizations(industry_key, franchise_vertical)"
         )
         .eq("id", session.id)
         .maybeSingle<ChatSession>();
