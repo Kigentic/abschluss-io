@@ -13,7 +13,12 @@ import {
   validateRegisterForm,
 } from "@/lib/auth-flows";
 import { getPlanLabel } from "@/lib/copecart-products";
-import { INDUSTRY_OPTIONS, type IndustryKey } from "@/lib/industries";
+import {
+  FRANCHISE_VERTICAL_OPTIONS,
+  INDUSTRY_OPTIONS,
+  type FranchiseVerticalKey,
+  type IndustryKey,
+} from "@/lib/industries";
 import { getSupabaseBrowserClient, hasSupabaseEnv } from "@/lib/supabase";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -28,6 +33,8 @@ function RegisterPageContent() {
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [industryKey, setIndustryKey] = useState<IndustryKey>("fitness");
+  const [franchiseVertical, setFranchiseVertical] =
+    useState<FranchiseVerticalKey>("other");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [licensePlan, setLicensePlan] = useState<LicensePlan>("solo");
@@ -48,6 +55,7 @@ function RegisterPageContent() {
       lastName,
       username,
       industryKey,
+      franchiseVertical,
       email,
       password,
       licensePlan,
@@ -83,6 +91,10 @@ function RegisterPageContent() {
             last_name: values.lastName.trim(),
             username: values.username.trim(),
             industry_key: values.industryKey,
+            franchise_vertical:
+              values.industryKey === "franchise"
+                ? values.franchiseVertical
+                : null,
             license_plan: values.licensePlan,
           },
           password,
@@ -405,9 +417,13 @@ function RegisterPageContent() {
                         <select
                           id="industryKey"
                           value={industryKey}
-                          onChange={(event) =>
-                            setIndustryKey(event.target.value as IndustryKey)
-                          }
+                          onChange={(event) => {
+                            const nextIndustryKey = event.target.value as IndustryKey;
+                            setIndustryKey(nextIndustryKey);
+                            if (nextIndustryKey !== "franchise") {
+                              setFranchiseVertical("other");
+                            }
+                          }}
                           className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-[#707070] shadow-[0_10px_24px_rgba(15,23,42,0.04)] outline-none transition focus:border-[#0e51a0] focus:ring-4 focus:ring-[#0e51a0]/10"
                           disabled={isLoading}
                         >
@@ -423,6 +439,39 @@ function RegisterPageContent() {
                           </p>
                         ) : null}
                       </div>
+
+                      {industryKey === "franchise" ? (
+                        <div>
+                          <label
+                            htmlFor="franchiseVertical"
+                            className="mb-2 block text-sm font-medium text-slate-700"
+                          >
+                            Franchise-Segment
+                          </label>
+                          <select
+                            id="franchiseVertical"
+                            value={franchiseVertical}
+                            onChange={(event) =>
+                              setFranchiseVertical(
+                                event.target.value as FranchiseVerticalKey
+                              )
+                            }
+                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-[#707070] shadow-[0_10px_24px_rgba(15,23,42,0.04)] outline-none transition focus:border-[#0e51a0] focus:ring-4 focus:ring-[#0e51a0]/10"
+                            disabled={isLoading}
+                          >
+                            {FRANCHISE_VERTICAL_OPTIONS.map((segment) => (
+                              <option key={segment.value} value={segment.value}>
+                                {segment.label}
+                              </option>
+                            ))}
+                          </select>
+                          {fieldErrors.franchiseVertical ? (
+                            <p className="mt-2 text-sm text-red-700">
+                              {fieldErrors.franchiseVertical}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : null}
 
                       <div>
                         <label

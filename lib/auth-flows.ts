@@ -1,5 +1,10 @@
 import { COPECART_PLAN_KEYS } from "@/lib/copecart-products";
-import { INDUSTRY_KEYS, type IndustryKey } from "@/lib/industries";
+import {
+  FRANCHISE_VERTICAL_KEYS,
+  INDUSTRY_KEYS,
+  type FranchiseVerticalKey,
+  type IndustryKey,
+} from "@/lib/industries";
 
 export const LICENSE_PLANS = COPECART_PLAN_KEYS;
 
@@ -14,6 +19,7 @@ export type AuthFormValues = {
 };
 
 export type RegisterFormValues = AuthFormValues & {
+  franchiseVertical: FranchiseVerticalKey;
   industryKey: IndustryKey;
   organizationName: string;
   licensePlan: LicensePlan;
@@ -26,6 +32,7 @@ export type FormErrors = Partial<
     | "lastName"
     | "username"
     | "industryKey"
+    | "franchiseVertical"
     | "email"
     | "password"
     | "licensePlan",
@@ -67,6 +74,13 @@ export function validateRegisterForm(values: RegisterFormValues): FormErrors {
 
   if (!INDUSTRY_KEYS.includes(values.industryKey)) {
     errors.industryKey = "Bitte wähle eine gültige Branche aus.";
+  }
+  if (
+    values.industryKey === "franchise" &&
+    !FRANCHISE_VERTICAL_KEYS.includes(values.franchiseVertical)
+  ) {
+    errors.franchiseVertical =
+      "Bitte wähle ein gültiges Franchise-Segment aus.";
   }
 
   if (!values.email.trim()) {

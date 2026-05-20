@@ -240,10 +240,11 @@ export async function PATCH(
 
     let updatedOrganization: OrganizationRecord | null = null;
     let updateError: { message: string } | null = null;
+    let payloadUsedForLastUpdate = { ...updatePayload };
 
     const updateResultWithVertical = await adminAuth.serviceRoleClient
       .from("organizations")
-      .update(updatePayload)
+      .update(payloadUsedForLastUpdate)
       .eq("id", organizationId)
       .select("id, industry_key, prompt_profile_key, industry_locked, franchise_vertical")
       .single<OrganizationRecord>();
@@ -253,9 +254,10 @@ export async function PATCH(
 
     if (updateError?.message?.includes("franchise_vertical")) {
       const { franchise_vertical: _ignored, ...fallbackPayload } = updatePayload;
+      payloadUsedForLastUpdate = fallbackPayload;
       const updateFallbackResult = await adminAuth.serviceRoleClient
         .from("organizations")
-        .update(fallbackPayload)
+        .update(payloadUsedForLastUpdate)
         .eq("id", organizationId)
         .select("id, industry_key, prompt_profile_key, industry_locked")
         .single<{
@@ -282,7 +284,7 @@ export async function PATCH(
 
       if (legacyIndustryKey !== updatePayload.industry_key) {
         const legacyPayload = {
-          ...updatePayload,
+          ...payloadUsedForLastUpdate,
           industry_key: legacyIndustryKey,
         };
 
