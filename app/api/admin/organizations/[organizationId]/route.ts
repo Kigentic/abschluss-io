@@ -191,6 +191,8 @@ export async function PATCH(
       industry_locked?: boolean;
       prompt_profile_key?: string | null;
     } = {};
+    const isFranchiseIndustrySwitch =
+      typeof industryKey === "string" && nextIndustryKey === "franchise";
 
     if (typeof industryKey === "string") {
       updatePayload.industry_key = nextIndustryKey;
@@ -222,6 +224,18 @@ export async function PATCH(
         nextIndustryKey === "franchise"
           ? normalizedFranchiseVertical ?? normalizeFranchiseVerticalKey(organization.franchise_vertical)
           : null;
+    }
+
+    // For explicit switch to franchise from admin, mimic a minimal signup-style write path:
+    // only persist industry_key and franchise_vertical.
+    if (isFranchiseIndustrySwitch) {
+      const nextFranchiseVertical =
+        normalizedFranchiseVertical ??
+        normalizeFranchiseVerticalKey(organization.franchise_vertical);
+      updatePayload.industry_key = "franchise";
+      updatePayload.franchise_vertical = nextFranchiseVertical;
+      delete updatePayload.industry_locked;
+      delete updatePayload.prompt_profile_key;
     }
 
     if (Object.keys(updatePayload).length === 0) {
